@@ -1,0 +1,231 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                    String  @id @default(cuid())
+  userId                String
+  type                  String
+  provider              String
+  providerAccountId     String
+  refreshTokenExpiresIn String?
+  refresh_token         String?
+  access_token          String?
+  expires_at            Int?
+  token_type            String?
+  scope                 String?
+  id_token              String?
+  session_state         String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  city          String?
+  role          String    @default("USER")
+  status        AdminStatus @default(UNABLE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  suggestions   Suggestion[]
+  projects      Project[]
+}
+
+enum AdminStatus {
+  UNABLE
+  DISABLE
+}
+
+model Project {
+  id            String @id @default(cuid())
+  title         String
+  description   String? @db.Text
+  status        Status @default(NOT_STARTED)
+  pictures      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  userId        String
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  steps   Step[]
+  items   ItemOnProject[]
+}
+
+enum Status {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Step {
+  id            String @id @default(cuid())
+  number        Int?
+  title         String
+  description   String? @db.Text
+  status        Status @default(NOT_STARTED)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projectId     String
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Item {
+  id            String @id @default(cuid())
+  name          String
+  unit          String? @db.Char(10)
+  description   String? @db.Text
+  order         ItemOrder @default(PRIMARY)
+  status        AdminStatus @default(UNABLE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects    ItemOnProject[]
+  questions   QuestionOnItem[]
+  tips        Tip[]
+}
+
+model ItemOnProject {
+  id              String @id @default(cuid())
+  projectId       String
+  itemId          String
+  modifiedName    String?   @map("modified_name")
+  userNote        String?   @map("user_note")
+  estimatedPrice  Int?      @map("estimated_price")
+  realPrice       Int?      @map("real_price")
+  order           ItemOrder? @default(PRIMARY)
+
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, itemId])
+}
+
+enum ItemOrder {
+  PRIMARY
+  SECONDARY
+  TERTIARY
+}
+
+model Tip {
+  id            String @id @default(cuid())
+  title         String
+  description   String? @db.Text
+  link          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  groupId       String?
+  questionId    String?
+  itemId        String?
+
+  group     Group?      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  question  Question?   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  item      Item?       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+  id            String @id @default(cuid())
+  title         String
+  infos         String? @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  items   QuestionOnItem[]
+  groups  GroupOnQuestion[]
+  tips        Tip[]
+}
+
+model QuestionOnItem {
+  id            String @id @default(cuid())
+  questionId    String
+  itemId        String
+
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  item        Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model Group {
+  id            String @id @default(cuid())
+  title         String
+  infos         String? @db.Text
+  rank          Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  questions   GroupOnQuestion[]
+  tips        Tip[]
+}
+
+model GroupOnQuestion {
+  id            String @id @default(cuid())
+  groupId       String
+  questionId    String
+
+  group     Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  question  Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model Suggestion {
+  id            String @id @default(cuid())
+  userId        String
+  title         String
+  description   String? @db.Text
+  category      Category @default(OTHER)
+  status        SuggestionStatus @default(IN_PROGRESS)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Category {
+  PROJECT
+  APP
+  OTHER
+}
+
+enum SuggestionStatus {
+  IN_PROGRESS
+  VALIDATED
+  REFUSED
+}

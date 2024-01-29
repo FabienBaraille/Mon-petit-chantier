@@ -4,7 +4,7 @@
 
 |Champ|Type|Spécificités|Description|
 |-|-|-|-|
-|id|INT|PRIMARY KEY, NOT NULL, UNSIGNED, AUTO_INCREMENT|L'identifiant de l'utilisateur|
+|id|String|PRIMARY KEY, NOT NULL, UNSIGNED, AUTO_INCREMENT|L'identifiant de l'utilisateur|
 |username|VARCHAR(255)|NOT NULL|Nom de l'utilisateur|
 |password|VARCHAR(150)|NOT NULL|Mot de passe de l'utilisateur (crypté)|
 |email|VARCHAR(150)|NOT NULL|Email de l'utilisateur|
@@ -79,6 +79,18 @@
 |id|INT|PRIMARY KEY, NOT NULL, UNSIGNED, AUTO_INCREMENT|L'identifiant du groupe|
 |title|VARCHAR(255)|NOT NULL|Titre du groupe|
 |infos|LONGTEXT|NULL|Information sur le groupe|
-|rank|SMALLINT|NOT NULL|Rand du groupe, 0: principal / 1:secondaire|
+|rank|SMALLINT|NOT NULL|Rang du groupe, 0: principal / 1:secondaire|
 |created_at|TIMESTAMP|NOT NULL, DEFAULT CURRENT_TIMESTAMP|La date de création du groupe|
 |updated_at|TIMESTAMP|NULL|La date de la dernière mise à jour du groupe|
+
+## SUGGESTION
+
+|Champ|Type|Spécificités|Description|
+|-|-|-|-|
+|id|INT|PRIMARY KEY, NOT NULL, UNSIGNED, AUTO_INCREMENT|L'identifiant de la suggestion|
+|title|VARCHAR(255)|NOT NULL|Titre de la suggestion|
+|description|LONGTEXT|NOT NULL|Description de la suggestion|
+|category|VARCHAR(100)|NOT NULL|Sujet de la suggestion|
+|status|SMALLINT|NOT NULL|Status de la suggestion, 0: en cours / 1:traitée / 2:refusée|
+|created_at|TIMESTAMP|NOT NULL, DEFAULT CURRENT_TIMESTAMP|La date de création de la suggestion|
+|updated_at|TIMESTAMP|NULL|La date de la dernière mise à jour de la suggestion|
