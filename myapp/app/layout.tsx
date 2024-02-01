@@ -6,6 +6,8 @@ import { Inter } from 'next/font/google';
 import { PropsWithChildren } from 'react';
 import { Providers } from './Providers';
 import './globals.css';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <>
-      <html lang="en" className="h-full" suppressHydrationWarning>
+      <html lang="fr-FR" className="h-full" suppressHydrationWarning>
         <head />
         <body
           className={cn(
@@ -27,9 +29,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
         >
           <Providers>
             <div className="relative flex min-h-screen flex-col">
-              {/* <Header /> */}
+              <Header />
               <div className="flex-1">{children}</div>
-              {/* <Footer /> */}
+              <Footer />
             </div>
             <TailwindIndicator />
           </Providers>

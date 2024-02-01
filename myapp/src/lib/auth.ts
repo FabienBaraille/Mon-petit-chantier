@@ -24,7 +24,9 @@ export const getRequiredAuthSession = async (...parameters: ParametersGetServerS
       id: string,
       email?: string,
       image?: string,
-      name: string | null
+      name: string | null,
+      role?: string,
+      status?: string
     }
   };
 };

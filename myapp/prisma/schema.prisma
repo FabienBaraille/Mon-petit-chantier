@@ -52,14 +52,14 @@ model VerificationToken {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  name          String?   @unique
   email         String    @unique
   emailVerified DateTime?
   password      String?
   image         String?
   city          String?
   role          String    @default("USER")
-  status        AdminStatus @default(UNABLE)
+  status        AdminStatus @default(UNABLED)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -70,8 +70,8 @@ model User {
 }
 
 enum AdminStatus {
-  UNABLE
-  DISABLE
+  UNABLED
+  DISABLED
 }
 
 model Project {
@@ -114,14 +114,18 @@ model Item {
   name          String
   unit          String? @db.Char(10)
   description   String? @db.Text
-  order         ItemOrder @default(PRIMARY)
-  status        AdminStatus @default(UNABLE)
+  rank          ItemRank @default(CATEGORY)
+  status        AdminStatus @default(UNABLED)
+  order         Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  projects    ItemOnProject[]
-  questions   QuestionOnItem[]
-  tips        Tip[]
+  projects      ItemOnProject[]
+  questions     QuestionOnItem[]
+  tips          Tip[]
+
+  belongTo      Item[]  @relation("Categories")
+  have          Item[]  @relation("Categories")
 }
 
 model ItemOnProject {
@@ -132,7 +136,7 @@ model ItemOnProject {
   userNote        String?   @map("user_note")
   estimatedPrice  Int?      @map("estimated_price")
   realPrice       Int?      @map("real_price")
-  order           ItemOrder? @default(PRIMARY)
+  modifiedOrder   Int?      @map("modified_order")
 
   project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   item      Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
@@ -140,10 +144,10 @@ model ItemOnProject {
   @@unique([projectId, itemId])
 }
 
-enum ItemOrder {
-  PRIMARY
-  SECONDARY
-  TERTIARY
+enum ItemRank {
+  CATEGORY
+  PRODUCT
+  BY_PRODUCT
 }
 
 model Tip {
@@ -172,7 +176,7 @@ model Question {
 
   items   QuestionOnItem[]
   groups  GroupOnQuestion[]
-  tips        Tip[]
+  tips    Tip[]
 }
 
 model QuestionOnItem {
