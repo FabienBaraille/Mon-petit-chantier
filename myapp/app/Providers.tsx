@@ -1,18 +1,21 @@
 'use client';
 
+import { MyOwnTheme } from '@/components/Theme/MyOwnTheme';
+import { ThemeProvider } from '@mui/material';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
-import { ThemeProvider } from 'next-themes';
 import { PropsWithChildren } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
 
 export const Providers = ({ children }: PropsWithChildren) => {
+  const queryClient = new QueryClient();
   return (
-    <>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Toaster />
-        <SessionProvider>{children}</SessionProvider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider theme={MyOwnTheme}>
+      <SessionProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </SessionProvider>
+    </ThemeProvider>
   );
 };
 

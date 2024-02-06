@@ -8,6 +8,11 @@ import { Providers } from './Providers';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import { CssBaseline } from '@mui/material';
 
 const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -28,9 +33,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
           )}
         >
           <Providers>
-            <div className="relative flex min-h-screen flex-col">
+            <CssBaseline />
+            <div className="relative flex min-h-screen flex-col items-center">
               <Header />
-              <div className="flex-1">{children}</div>
+              <main className='flex-1'>{children}</main>
               <Footer />
             </div>
             <TailwindIndicator />

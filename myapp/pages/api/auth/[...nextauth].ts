@@ -21,6 +21,10 @@ export const authOptions: AuthOptions = {
       session.user.image = user.image;
       return session;
     },
+    redirect({baseUrl}) {
+      baseUrl = "http://localhost:3000/";
+      return baseUrl
+    }
   },
 };
 
