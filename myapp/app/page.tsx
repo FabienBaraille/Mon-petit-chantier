@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 
-export default function Home() {
+export default async function Home() {
+
   return (
     <>
         <Typography variant="h2">Bienvenue</Typography>

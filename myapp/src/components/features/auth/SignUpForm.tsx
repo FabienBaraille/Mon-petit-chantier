@@ -9,15 +9,18 @@ import { FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Ou
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
+import { createUser } from "../../../../app/account/Utils/createUser";
 
 export type SignUpFormProps = {};
 
 export const SignUpForm = (props: SignUpFormProps) => {
 
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [confirmation, setConfirmation] = useState('');
-  const [comparison, setComparison] = useState(false);
+  const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [confirmation, setConfirmation] = useState<string>('');
+  const [comparison, setComparison] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>('');
+  const [successMessage, setSuccessMessage] = useState<string | undefined>('');
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -40,9 +43,36 @@ export const SignUpForm = (props: SignUpFormProps) => {
       password: ""
     },
   })
-  const onSubmit = (data) => {
-    console.log(data);
-    // Pour le onSubmit, voir pour passer la méthode en props ? Ce qui permet de passer un server side component ?
+  const onSubmit = async (data: { 
+    username: string; 
+    email: string; 
+    password: string;
+  }) => {
+    const response = await createUser({
+      username: data.username,
+      email: data.email,
+      password: data.password
+    })
+    if (!response?.error) {
+      setSuccessMessage(response?.message);
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 2000)
+    }
+    if (response?.error) {
+      setErrorMessage(response.content[0] === 'name' ? "Cet utilisateur existe déjà." : "Cet Email est déjà utilisé.");
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 2000)
+    }
+  }
+
+  if (errorMessage !== '') {
+    return <div>{errorMessage}</div>
+  }
+
+  if (successMessage !== '') {
+    return <div>Yes</div>
   }
 
   return (

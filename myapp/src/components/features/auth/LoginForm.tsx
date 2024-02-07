@@ -1,18 +1,19 @@
 "use client";
 
-import { ChangeEvent, useState, MouseEvent } from "react";
+import { useState, MouseEvent } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
 import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
+import { signIn } from "next-auth/react";
 
 export type LoginFormProps = {};
 
 export const LoginForm = (props: LoginFormProps) => {
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -30,9 +31,12 @@ export const LoginForm = (props: LoginFormProps) => {
       password: ""
     },
   })
-  const onSubmit = (data) => {
+  const onSubmit = (event, data) => {
     console.log(data);
     // Pour le onSubmit, voir pour passer la méthode en props ? Ce qui permet de passer un server side component ?
+    signIn("credentials", {username: data.username, password: data.password});
+    console.log('click');
+    
   }
 
   return (
