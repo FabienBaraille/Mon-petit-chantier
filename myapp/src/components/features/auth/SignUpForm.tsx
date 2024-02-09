@@ -9,7 +9,9 @@ import { FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Ou
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
-import { createUser } from "../../../../app/account/Utils/createUser";
+import { createUser } from "../../../Utils/Request/createUser";
+import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
 
 export type SignUpFormProps = {};
 
@@ -48,19 +50,30 @@ export const SignUpForm = (props: SignUpFormProps) => {
     email: string; 
     password: string;
   }) => {
-    const response = await createUser({
-      username: data.username,
-      email: data.email,
-      password: data.password
-    })
-    if (!response?.error) {
-      setSuccessMessage(response?.message);
+    try {
+      const response = await (
+        await fetch("/api/auth/register", {
+          body: JSON.stringify(data),
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+      ).json();
+
+      if (response?.error) {
+        setErrorMessage(response.error);
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000)
+      }
+      setSuccessMessage("Compte crée avec succès, vous pouvez vous connecter.");
       setTimeout(() => {
         setSuccessMessage('');
+        signIn();
       }, 2000)
-    }
-    if (response?.error) {
-      setErrorMessage(response.content[0] === 'name' ? "Cet utilisateur existe déjà." : "Cet Email est déjà utilisé.");
+    } catch (error: any) {
+      setErrorMessage(error.message);
       setTimeout(() => {
         setErrorMessage('');
       }, 2000)
@@ -72,11 +85,11 @@ export const SignUpForm = (props: SignUpFormProps) => {
   }
 
   if (successMessage !== '') {
-    return <div>Yes</div>
+    return <div>{successMessage}</div>
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} action="POST">
       <Controller
         control={control}
         rules={{

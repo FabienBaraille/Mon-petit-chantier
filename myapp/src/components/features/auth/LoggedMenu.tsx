@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -11,15 +9,16 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Logout from '@mui/icons-material/Logout';
 
-import { Session } from 'next-auth';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 export type LoggedMenuProps = {
   user: Session['user']
 };
 
 export const LoggedMenu = (props: LoggedMenuProps) => {
+
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

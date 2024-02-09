@@ -1,19 +1,79 @@
-import { env } from '@/lib/env';
-import { prisma } from '@/lib/prisma';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import NextAuth, { AuthOptions } from 'next-auth';
+import type { NextApiRequest, NextApiResponse } from "next";
+
+import { prisma } from "@/lib/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+
+import NextAuth from "next-auth/next";
+import { AuthOptions } from "next-auth";
+import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { getUserFromDb } from '../../../app/account/Utils/getUser';
+import { JWTEncodeParams, JWTDecodeParams, decode, encode } from "next-auth/jwt";
 
-const bcrypt = require('bcryptjs');
+import { randomBytes, randomUUID } from "crypto";
+import Cookies from 'cookies';
+import bcrypt from 'bcrypt';
 
-export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  theme: {
-    logo: '/images/logo-text.png',
-  },
-  providers: [
+import { env } from "@/lib/env";
+import { getAuthUser } from "@/Utils/Request/getAuthUser";
+import { getUserFromDb } from "@/Utils/Request/getUser";
+
+const generateSessionToken = () => {
+  return randomUUID?.() ?? randomBytes(15).toString("hex")
+}
+
+const fromDate = (time: number, date = Date.now()) => {
+  return new Date(date + time * 1000)
+}
+
+export function authOptionsWrapper(req: NextApiRequest, res: NextApiResponse) {
+
+  const isCredentialsCallback = req.query.nextauth?.includes('callback') && req.query.nextauth.includes('credentials') && req.method === 'POST';
+
+  const cookies = new Cookies(req, res);
+
+  const adapter = PrismaAdapter(prisma);
+
+  const callbacks = {
+    async signIn({user} : {user: AdapterUser}) {
+      if (isCredentialsCallback) {
+        if (user) {
+          const sessionToken = generateSessionToken();
+          const expires = fromDate(30 * 24 * 60 * 60);
+          await prisma.session.create({data : {userId: user.id, sessionToken, expires}});
+
+          cookies.set("next-auth.session-token", sessionToken, {
+            expires: expires,
+          });
+        }
+      }
+      return true
+    },
+    redirect({baseUrl} : {baseUrl: string}) {
+      baseUrl = "http://localhost:3000/";
+      return baseUrl
+    },
+    async jwt({ token, user }) {
+      if (user) token.role = user.role;
+      return token;
+    },
+    async session({session, user}) {
+
+      const userFind = await getUserFromDb('', user.email);
+
+      session.user.id = userFind[0].id;
+      session.user.email = userFind[0].email;
+      session.user.role = userFind[0].role ;
+      session.user.image = userFind[0].image;
+      session.user.name = userFind[0].name;
+      session.user.username = userFind[0].username;
+      session.user.status = userFind[0].status;
+
+      return session
+    },
+  }
+
+  const providers = [
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -21,19 +81,27 @@ export const authOptions: AuthOptions = {
         password: { label: "password", type: "password"}
       },
       async authorize(credentials) {
+
+        if (!credentials?.username || !credentials.password) {
+          return null
+        }
+
         let user = null;
-        user = await getUserFromDb({
-          username: credentials?.username
-        });
+        user = await getAuthUser(credentials?.username);
 
-        // if (!user) {
-        //   throw new Error("Utilisateur non trouvé")
-        // }
+        if (!user) {
+          console.log('Utilisateur non trouvé');
+          return null
+          // throw new Error("Utilisateur non trouvé")
+        }
 
-        // if (user.password !== credentials?.password) {
-        //   throw new Error("Le mot de passe n'est pas correct")
-        // }
+        const passwordMatch = await bcrypt.compare(credentials.password, user?.password!);
 
+        if (!passwordMatch) {
+          console.log('Mot de passe faux');
+          return null
+          // throw new Error("Le mot de passe n'est pas correct")
+        }
         return user;
       }
     }),
@@ -41,26 +109,60 @@ export const authOptions: AuthOptions = {
       clientId: env.GOOGLE_ID,
       clientSecret: env.GOOGLE_SECRET
     }),
-  ],
-  // session: {
-  //   strategy: "jwt",
-  // },
-  secret: process.env.NEXTAUTH_SECRET,
-  callbacks: {
-    session({ session, user }) {
-      session.user.id = user.id;
-      session.user.image = user.image;
-      return session;
-    },
-    redirect({baseUrl}) {
-      baseUrl = "http://localhost:3000/";
-      return baseUrl
-    }
-  },
-  pages: {
-    signIn: '/auth/signin'
-  },
-  // debug: process.env.NODE_ENV === "development",
-};
+  ]
+  const options: AuthOptions = {
+    adapter: adapter,
+    providers: providers,
+    callbacks: callbacks,
+    secret: process.env.NEXTAUTH_SECRET,
+    jwt: {
+      maxAge: 60 * 60 * 24 * 30,
+      async encode(params: JWTEncodeParams) {
+        if (isCredentialsCallback) {
+          const cookie = cookies.get("next-auth.session-token");
+          console.log('cookie');
 
-export default NextAuth(authOptions);
+          if (cookie) return cookie;
+          return "";
+        }
+
+        return encode(params);
+      },
+      async decode(params: JWTDecodeParams) {
+        if (isCredentialsCallback) {
+          return null;
+        }
+        return decode(params);
+      },
+    },
+    session: {
+      strategy:  "database"
+    },
+    pages: {
+      signIn: '/account/login'
+    },
+    events: {
+      async signOut({ session }) {
+        const { sessionToken = "" } = session as unknown as {
+          sessionToken?: string;
+        };
+
+        if (sessionToken) {
+          await prisma.session.deleteMany({
+            where: {
+              sessionToken,
+            },
+          });
+        }
+      },
+    },
+  }
+  return [req, res, options] as const;
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  return NextAuth(...authOptionsWrapper(req, res));
+}

@@ -8,10 +8,6 @@ import { Providers } from './Providers';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
 import { CssBaseline } from '@mui/material';
 
 const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans' });

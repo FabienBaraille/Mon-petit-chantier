@@ -1,13 +1,10 @@
-"use client";
-
 import { Button, Link } from "@mui/material";
 import LoginIcon from '@mui/icons-material/Login';
-import { signIn } from "next-auth/react";
 
 export const LoginBtn = () => {
 
   // On regarde la taille de l'écran pour modifier le contenu du bouton de connexion
-  const windowWidth = window.innerWidth;
+  // const windowWidth = window.innerWidth;
   
   return (
     <Button
@@ -25,8 +22,8 @@ export const LoginBtn = () => {
           color: '#DDEFF0'
         }
       }}
-      // onClick={() => signIn()}
     >
-      {windowWidth >= 600 ? 'Connexion' : <LoginIcon fontSize="small" />}
+      Connexion
+      {/* {windowWidth >= 600 ? 'Connexion' : <LoginIcon fontSize="small" />} */}
     </Button>)
 }

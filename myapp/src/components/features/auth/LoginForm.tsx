@@ -31,16 +31,12 @@ export const LoginForm = (props: LoginFormProps) => {
       password: ""
     },
   })
-  const onSubmit = (event, data) => {
-    console.log(data);
-    // Pour le onSubmit, voir pour passer la méthode en props ? Ce qui permet de passer un server side component ?
+  const onSubmit = (data: { username: any; password: any; }) => {
     signIn("credentials", {username: data.username, password: data.password});
-    console.log('click');
-    
   }
 
   return (
-    <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit(onSubmit)} action="POST">
       <Controller
         control={control}
         rules={{
