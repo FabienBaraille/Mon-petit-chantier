@@ -2,26 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    header {
+      @apply sticky top-0 z-40 flex w-full flex-row items-center my-2 pb-2;
+      justify-content: space-around;
+      border-bottom: solid 1px #356069;
+      width: 100%;
+      @media screen and (min-width : 600px) {
+        width: 95%;
+        @apply mb-4;
+      }
+      a {
+        text-decoration: none;
+        color: #356069;
+      }
+    }
+    form {
+      @apply flex flex-col gap-4;
+    }
+    footer {
+      border-top: solid 1px #356069;
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      @media screen and (min-width : 600px) {
+        width: 95%;
+      }
+    }
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+header .img-container {
+  @media screen and (min-width : 600px) {
+    width: 90px;
+  }
 }
