@@ -8,12 +8,16 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
 import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export type LoginFormProps = {};
 
 export const LoginForm = (props: LoginFormProps) => {
 
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>('');
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -31,8 +35,28 @@ export const LoginForm = (props: LoginFormProps) => {
       password: ""
     },
   })
-  const onSubmit = (data: { username: any; password: any; }) => {
-    signIn("credentials", {username: data.username, password: data.password});
+  const onSubmit = async(data: { username: any; password: any; }) => {
+    try {
+      const response = await signIn("credentials", {username: data.username, password: data.password, redirect: false});
+      // Affichage d'erreur avec toast à faire
+      if (response?.error) {
+        setErrorMessage(response.error);
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000)
+      } else {
+        router.replace('/')
+      }
+    } catch (error: any) {
+      setErrorMessage(error.message);
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 2000)
+    }
+  }
+
+  if (errorMessage !== '') {
+    return <div>{errorMessage}</div>
   }
 
   return (

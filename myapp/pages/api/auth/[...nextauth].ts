@@ -35,6 +35,7 @@ export function authOptionsWrapper(req: NextApiRequest, res: NextApiResponse) {
   const adapter = PrismaAdapter(prisma);
 
   const callbacks = {
+    // SignIn callback to set session token and user Id in cookie
     async signIn({user} : {user: AdapterUser}) {
       if (isCredentialsCallback) {
         if (user) {
@@ -53,10 +54,7 @@ export function authOptionsWrapper(req: NextApiRequest, res: NextApiResponse) {
       baseUrl = "http://localhost:3000/";
       return baseUrl
     },
-    async jwt({ token, user }) {
-      if (user) token.role = user.role;
-      return token;
-    },
+    // Custom session object
     async session({session, user}) {
 
       const userFind = await getUserFromDb('', user.email);
@@ -66,14 +64,20 @@ export function authOptionsWrapper(req: NextApiRequest, res: NextApiResponse) {
       session.user.role = userFind[0].role ;
       session.user.image = userFind[0].image;
       session.user.name = userFind[0].name;
-      session.user.username = userFind[0].username;
       session.user.status = userFind[0].status;
 
       return session
     },
+    async jwt({ token, user }) {
+      console.log('jwt callback');
+      
+      if (user) token.role = user.role;
+      return token;
+    },
   }
 
   const providers = [
+    // Provider for signin with username/password
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -86,22 +90,16 @@ export function authOptionsWrapper(req: NextApiRequest, res: NextApiResponse) {
           return null
         }
 
-        let user = null;
-        user = await getAuthUser(credentials?.username);
-
+        const user = await getAuthUser(credentials?.username);
         if (!user) {
-          console.log('Utilisateur non trouvé');
-          return null
-          // throw new Error("Utilisateur non trouvé")
+          throw new Error("Utilisateur non trouvé")
         }
 
         const passwordMatch = await bcrypt.compare(credentials.password, user?.password!);
-
         if (!passwordMatch) {
-          console.log('Mot de passe faux');
-          return null
-          // throw new Error("Le mot de passe n'est pas correct")
+          throw new Error("Le mot de passe n'est pas correct")
         }
+
         return user;
       }
     }),
@@ -120,7 +118,7 @@ export function authOptionsWrapper(req: NextApiRequest, res: NextApiResponse) {
       async encode(params: JWTEncodeParams) {
         if (isCredentialsCallback) {
           const cookie = cookies.get("next-auth.session-token");
-          console.log('cookie');
+          // console.log('cookie');
 
           if (cookie) return cookie;
           return "";
@@ -134,9 +132,6 @@ export function authOptionsWrapper(req: NextApiRequest, res: NextApiResponse) {
         }
         return decode(params);
       },
-    },
-    session: {
-      strategy:  "database"
     },
     pages: {
       signIn: '/account/login'
