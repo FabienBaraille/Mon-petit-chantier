@@ -11,6 +11,7 @@ import { getAuthUser } from "@/Utils/Request/getAuthUser";
 import { env } from "@/lib/env";
 
 import bcrypt from 'bcrypt';
+import { getAuthSession } from "@/lib/auth";
 
 const adapter = PrismaAdapter(prisma);
 
@@ -69,7 +70,7 @@ export const authOptions: NextAuthOptions = {
       };
     },
     redirect({baseUrl} : {baseUrl: string}) {
-      baseUrl = "http://localhost:3000/";
+      baseUrl = "http://localhost:3000";
       return baseUrl
     },
   },

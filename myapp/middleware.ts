@@ -1,26 +1,22 @@
-import { getToken } from "next-auth/jwt";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server";
 
-export default async function rbacMiddleware(req: NextRequest) {
+export default withAuth(
+  function middleware(req: NextRequestWithAuth) {
+   
+    const token = req.nextauth.token;
+    
+    if (token?.role === "USER" &&  req.nextUrl.pathname.startsWith("/admin")) {
+      return NextResponse.redirect(
+        new URL("/user", req.url)
+      )
+    }
+    if (token?.role === "ADMIN" && req.nextUrl.pathname.startsWith("/user")) {
+      return NextResponse.redirect(
+        new URL("/admin", req.url)
+      )
+    }
+  }
+)
 
-  const token = await getToken({ req, secret: process.env.SECRET });
-
-  // console.log(req.nextUrl.pathname);
-  
-
-  // switch (token?.role) {
-  //   case "USER":
-
-  //     if (req.nextUrl.pathname.match("/") || req.nextUrl.pathname.startsWith("/admin")) {
-  //       return NextResponse.redirect(new URL("/user"), req.url)
-  //     }
-  //     break;
-  //   case "ADMIN":
-  //     if (req.nextUrl.pathname.match("/") || req.nextUrl.pathname.startsWith("/user")) {
-  //       return NextResponse.redirect(new URL("/admin"), req.url)
-  //     }
-  //     break;
-  //   default:
-  //     break;
-  // }
-}
+export const config = { matcher: ["/user/:path*", "/admin/:path*"] }
