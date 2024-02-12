@@ -1,16 +1,14 @@
-"use client";
-
 import { LoginBtn } from "./LoginBtn";
 import { LoggedMenu } from "./LoggedMenu";
-import { useSession } from "next-auth/react";
+import { getAuthSession } from "@/lib/auth";
 
 export type AuthElementProps = {};
 
-export const AuthElement = (props: AuthElementProps) => {
+export const AuthElement = async (props: AuthElementProps) => {
 
-  const session = useSession();
-  
-  const user = session.data?.user;
+  const session = await getAuthSession();
+
+  const user = session?.user;
 
   return (
     !user ? <LoginBtn /> : <LoggedMenu user={user} />

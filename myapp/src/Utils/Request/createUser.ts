@@ -11,7 +11,7 @@ export const createUser = async ({
 }: {
   username: string,
   email: string,
-  password: string
+  password: string | null
 }) => {
 
   const userExist = await getUserFromDb(username, email);
@@ -24,7 +24,7 @@ export const createUser = async ({
 
   const salt = bcrypt.genSaltSync(10);
 
-  const hashPassword = bcrypt.hashSync(password, salt);
+  const hashPassword = password ?  bcrypt.hashSync(password, salt) : null;
 
   const datas = {
     name: username,
@@ -46,7 +46,7 @@ export const createUser = async ({
           providerAccountId: user.id,
         }
       })
-      return {user: user, account: account, status: 200};
+      return {message: "Compte crée avec succès, vous pouvez vous connecter.", status: 200 };
     } catch (error) {
       return {message: "Impossible d'associer le compte, veuillez réessayer.", status: 500 }
     }

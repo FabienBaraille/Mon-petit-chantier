@@ -37,15 +37,13 @@ export const LoginForm = (props: LoginFormProps) => {
   })
   const onSubmit = async(data: { username: any; password: any; }) => {
     try {
-      const response = await signIn("credentials", {username: data.username, password: data.password, redirect: false});
+      const response = await signIn("credentials", {username: data.username, password: data.password});
       // Affichage d'erreur avec toast à faire
       if (response?.error) {
         setErrorMessage(response.error);
         setTimeout(() => {
           setErrorMessage('');
         }, 2000)
-      } else {
-        router.replace('/')
       }
     } catch (error: any) {
       setErrorMessage(error.message);
