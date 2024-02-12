@@ -2,7 +2,6 @@
 
 import { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useRouter } from "next/router";
 
 import { Strength } from "./strength/Strength";
 
@@ -10,11 +9,13 @@ import { FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Ou
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
+import { useRouter } from "next/navigation";
 
 export type SignUpFormProps = {};
 
 export const SignUpForm = (props: SignUpFormProps) => {
 
+  // Ajouter mutation pour le sign up
   const router = useRouter();
 
   const [password, setPassword] = useState<string>('');
@@ -51,32 +52,31 @@ export const SignUpForm = (props: SignUpFormProps) => {
     password: string;
   }) => {
     try {
-      const response = await (
+      const response = 
         await fetch("/api/auth/register", {
           body: JSON.stringify(data),
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-        })
-      ).json();
+        });
       // Voir pour utiliser les toast à la place des messages timés
-      if (response?.error) {
-        setErrorMessage(response.error);
+      if (response?.status) {
+        setErrorMessage(response.statusText);
         setTimeout(() => {
           setErrorMessage('');
-        }, 2000)
+        }, 5000)
       }
-      setSuccessMessage("Compte crée avec succès, vous pouvez vous connecter.");
+      setSuccessMessage(response.statusText);
       setTimeout(() => {
         setSuccessMessage('');
         router.replace('/account/login')
-      }, 2000)
+      }, 5000)
     } catch (error: any) {
       setErrorMessage(error.message);
       setTimeout(() => {
         setErrorMessage('');
-      }, 2000)
+      }, 5000)
     }
   }
 
