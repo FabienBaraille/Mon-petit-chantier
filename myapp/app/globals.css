@@ -18,6 +18,13 @@
         color: #356069;
       }
     }
+    button[type="submit"], button[type="button"] {
+      background-color: #DDEFF0;
+      &:hover {
+        background-color: #356069;
+        color: #DDEFF0;
+      }
+    }
     form {
       @apply flex flex-col gap-4;
     }

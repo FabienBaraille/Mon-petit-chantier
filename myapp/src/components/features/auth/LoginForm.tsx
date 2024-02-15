@@ -6,9 +6,10 @@ import { Controller, useForm } from "react-hook-form";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
-import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { MyLoadingButton } from "@/components/Theme/Custom/MyLoadingButton";
+import toast from "react-hot-toast";
 
 export type LoginFormProps = {};
 
@@ -17,7 +18,7 @@ export const LoginForm = (props: LoginFormProps) => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -37,24 +38,19 @@ export const LoginForm = (props: LoginFormProps) => {
   })
   const onSubmit = async(data: { username: any; password: any; }) => {
     try {
-      const response = await signIn("credentials", {username: data.username, password: data.password});
-      // Affichage d'erreur avec toast à faire
+      setIsLoading(true);
+      const response = await signIn("credentials", {username: data.username, password: data.password, redirect: false});
+
       if (response?.error) {
-        setErrorMessage(response.error);
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 2000)
+        toast.error(response.error)
+      } else {
+        router.push('/');
       }
     } catch (error: any) {
-      setErrorMessage(error.message);
-      setTimeout(() => {
-        setErrorMessage('');
-      }, 2000)
+      toast.error(error.message)
+    } finally {
+      setIsLoading(false);
     }
-  }
-
-  if (errorMessage !== '') {
-    return <div>{errorMessage}</div>
   }
 
   return (
@@ -106,11 +102,12 @@ export const LoginForm = (props: LoginFormProps) => {
         )}
         name="password"
       />
-      <MyAppBtn 
+      <MyLoadingButton 
         type="submit"
+        loading={isLoading}
       >
         Connecter
-      </MyAppBtn>
+      </MyLoadingButton>
     </form>
   )
 }

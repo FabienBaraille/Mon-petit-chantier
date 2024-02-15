@@ -8,22 +8,21 @@ import { Strength } from "./strength/Strength";
 import { FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
 import { useRouter } from "next/navigation";
+import { MyLoadingButton } from "@/components/Theme/Custom/MyLoadingButton";
+import toast from "react-hot-toast";
 
 export type SignUpFormProps = {};
 
 export const SignUpForm = (props: SignUpFormProps) => {
 
-  // Ajouter mutation pour le sign up
   const router = useRouter();
 
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [confirmation, setConfirmation] = useState<string>('');
   const [comparison, setComparison] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>('');
-  const [successMessage, setSuccessMessage] = useState<string | undefined>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -52,6 +51,7 @@ export const SignUpForm = (props: SignUpFormProps) => {
     password: string;
   }) => {
     try {
+      setIsLoading(true);
       const response = 
         await fetch("/api/auth/register", {
           body: JSON.stringify(data),
@@ -60,32 +60,21 @@ export const SignUpForm = (props: SignUpFormProps) => {
             "Content-Type": "application/json",
           },
         });
-      // Voir pour utiliser les toast à la place des messages timés
-      if (response?.status) {
-        setErrorMessage(response.statusText);
+        console.log(response.body);
+        
+      if (response?.status === 500) {
+        toast.error(response.statusText)
+      } else {
+        toast.success(response.statusText)
         setTimeout(() => {
-          setErrorMessage('');
-        }, 5000)
+          router.push('/account/login')
+        }, 2500)  
       }
-      setSuccessMessage(response.statusText);
-      setTimeout(() => {
-        setSuccessMessage('');
-        router.replace('/account/login')
-      }, 5000)
     } catch (error: any) {
-      setErrorMessage(error.message);
-      setTimeout(() => {
-        setErrorMessage('');
-      }, 5000)
+      toast.error(error.message)
+    } finally {
+      setIsLoading(false);
     }
-  }
-
-  if (errorMessage !== '') {
-    return <div>{errorMessage}</div>
-  }
-
-  if (successMessage !== '') {
-    return <div>{successMessage}</div>
   }
 
   return (
@@ -195,12 +184,13 @@ export const SignUpForm = (props: SignUpFormProps) => {
         />
         {comparison && <FormHelperText id="confirmation-helper" >Les mots de passe doivent être identiques.</FormHelperText>}
       </FormControl>
-      <MyAppBtn 
+      <MyLoadingButton 
         type="submit"
         disabled={comparison}
+        loading={isLoading}
       >
         Créer
-      </MyAppBtn>
+      </MyLoadingButton>
     </form>
   );
 }
