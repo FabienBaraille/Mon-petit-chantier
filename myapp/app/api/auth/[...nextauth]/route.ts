@@ -11,7 +11,6 @@ import { getAuthUser } from "@/Utils/Request/getAuthUser";
 import { env } from "@/lib/env";
 
 import bcrypt from 'bcrypt';
-import { getAuthSession } from "@/lib/auth";
 
 const adapter = PrismaAdapter(prisma);
 

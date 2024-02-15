@@ -6,18 +6,18 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { username, email, password, csrfToken} = body;
+    const { username, email, password } = body;
     if (username && email && password) {
       const response = await createUser({username, email, password})
       if (response.status === 200) {
-        return new Response(response.message, { status: 200 })
+        return new Response(null, { status: 200, statusText: response.message })
       } else {
-        return new Response(response.message, { status: 500 })
+        return new Response(null, { status: 500, statusText: response.message })
       }
     } else {
-      return new Response("Une erreur s'est produite, veuillez réessayer", { status: 500})
+      return new Response(null, { status: 500, statusText: "Une erreur s'est produite, veuillez réessayer" })
     }
   } catch (error) {
-    return new Response("Une erreur s'est produite, veuillez réessayer", { status: 500})
+    return new Response(null, { status: 500, statusText: "Une erreur s'est produite, veuillez réessayer" })
   }
 }

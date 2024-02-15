@@ -1,5 +1,3 @@
-"use server";
-
 import { prisma } from "@/lib/prisma";
 import { getUserFromDb } from "./getUser";
 import bcrypt from 'bcrypt';
