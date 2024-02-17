@@ -7,7 +7,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
-import { getAuthUser } from "@/Utils/Request/getAuthUser";
+import { getAuthUser } from "@/Utils/Request/usersQuery";
 import { env } from "@/lib/env";
 
 import bcrypt from 'bcrypt';
