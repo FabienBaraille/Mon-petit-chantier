@@ -3,8 +3,11 @@
 import { TableCell, TableHead, TableRow } from "@mui/material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { TableHeadCell } from "../tableHeadCell";
+import { rowsId, rowsName } from "../tableInfos";
 
 export type UserTableHeadProps = {};
+
+// Voir pour utiliser les props pour en faire un générique
 
 export const UserTableHead = (props: UserTableHeadProps) => {
 
@@ -28,27 +31,15 @@ export const UserTableHead = (props: UserTableHeadProps) => {
   return (
     <TableHead>
       <TableRow>
-        <TableHeadCell 
-          id="email" 
-          name="Email" 
-          direction={direction} 
-          sortedCol={sortedCol} 
-          handleChange={changeSort}
-        />
-        <TableHeadCell 
-          id="role" 
-          name="Role" 
-          direction={direction} 
-          sortedCol={sortedCol} 
-          handleChange={changeSort}
-        />
-        <TableHeadCell 
-          id="status" 
-          name="Statut" 
-          direction={direction} 
-          sortedCol={sortedCol} 
-          handleChange={changeSort}
-        />
+        {rowsId.map((rowId, index) =>
+          <TableHeadCell 
+            id={rowId} 
+            name={rowsName[index]} 
+            direction={direction} 
+            sortedCol={sortedCol} 
+            handleChange={changeSort}
+          />
+        )}
         <TableCell>Editer</TableCell>
       </TableRow>
     </TableHead>

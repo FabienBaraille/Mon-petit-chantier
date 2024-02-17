@@ -47,8 +47,7 @@ export const getSortedUsers = async (userRole: string | undefined, order: {[key:
       select: userData,
       orderBy: order
     })
-    const countUsers = await prisma.user.count({});
-    return { usersList, totalUsers: countUsers }
+    return usersList;
   } else {
     return null
   }
