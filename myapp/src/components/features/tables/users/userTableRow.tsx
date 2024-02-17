@@ -12,8 +12,8 @@ export const UserTableRow = (props: UserData) => {
       <td>{props.role}</td>
       <td>{props.status}</td>
       <td>
-        <IconButton id={props.id} onClick={(event) => console.log(event.currentTarget.id)}>
-          <EditIcon />
+        <IconButton className="classic-button" id={props.id} onClick={(event) => console.log(event.currentTarget.id)}>
+          <EditIcon fontSize="small" />
         </IconButton>
       </td>
     </TableRow>

@@ -128,6 +128,7 @@ export const SignUpForm = (props: SignUpFormProps) => {
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
+                    className="classic-button"
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}
@@ -167,11 +168,11 @@ export const SignUpForm = (props: SignUpFormProps) => {
           endAdornment={
             <InputAdornment position="end">
               <IconButton
+                className="classic-button"
                 aria-label="toggle password visibility"
                 onClick={handleClickShowPassword}
                 onMouseDown={handleMouseDownPassword}
                 edge="end"
-                className="icon-btn"
               >
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>

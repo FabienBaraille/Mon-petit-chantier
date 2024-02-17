@@ -40,6 +40,7 @@ export const LoggedMenu = (props: LoggedMenuProps) => {
       <Box>
         <Tooltip title="Mon compte">
           <IconButton
+            className='classic-button'
             onClick={handleClick}
             size="small"
             aria-controls={open ? 'account-menu' : undefined}

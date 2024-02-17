@@ -2,7 +2,6 @@ import { TailwindIndicator } from '@/components/TailwindIndicator';
 import { SiteConfig } from '@/lib/site-config';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { PropsWithChildren } from 'react';
 import { Providers } from './Providers';
 import './globals.css';
@@ -10,8 +9,6 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CssBaseline } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
-
-const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: SiteConfig.title,
@@ -25,8 +22,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <head />
         <body
           className={cn(
-            'h-full bg-background font-sans antialiased',
-            fontSans.variable
+            'h-full bg-background antialiased',
           )}
         >
           <Providers>

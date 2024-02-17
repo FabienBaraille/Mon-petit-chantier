@@ -14,8 +14,16 @@ export type TableHeadCellProps = {
 export const TableHeadCell = (props: TableHeadCellProps) => {
   return (
     <TableCell>
-      {props.name}<IconButton id={props.id} onClick={(event) => props.handleChange(event.currentTarget.id)}>
-        {props.sortedCol !== props.id ? <SortIcon /> : props.direction === 'asc' ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+      {props.name}
+      <IconButton 
+        className="classic-button" 
+        id={props.id} 
+        onClick={(event) => props.handleChange(event.currentTarget.id)}
+      >
+        {props.sortedCol !== props.id ? <SortIcon fontSize="small" /> :
+          props.direction === 'asc' ? <ArrowDownwardIcon fontSize="small" /> :
+            <ArrowUpwardIcon fontSize="small" />
+        }
       </IconButton>
     </TableCell>
   )

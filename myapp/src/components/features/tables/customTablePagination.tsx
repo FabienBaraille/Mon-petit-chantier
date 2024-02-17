@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+
+import './tableStyle.css';
 
 export type CustomTablePaginationProps = {
   count: number
@@ -17,7 +20,7 @@ export const CustomTablePagination = (props: CustomTablePaginationProps) => {
 
   const baseUrl = usePathname();
   const currentPage = Number(searchParams.get('page') ?? 0) ?? 0;
-  const currentRowsPerPage = Number(searchParams.get('perPage') ?? 50) ?? 50;
+  const currentRowsPerPage = Number(searchParams.get('per') ?? 50) ?? 50;
 
   const [rowsPerPage, setRowsPerPage] = useState<string>(currentRowsPerPage.toString());
 
@@ -31,25 +34,41 @@ export const CustomTablePagination = (props: CustomTablePaginationProps) => {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(event.currentTarget.value);
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('perPage', event.currentTarget.value);
+    newSearchParams.set('per', event.currentTarget.value);
     newSearchParams.set('page', '0');
     const url = `${baseUrl}?${newSearchParams.toString()}`;
     router.push(url);
   }
 
-  // Mise en forme à faire
-
   return (
-    <>
+    <div className="table-footer" >
       <label htmlFor="rowsPerPage">Entrées par page</label>
-      <select name="rowsPerPage" id="rows_select" onChange={handleChangeRowsPerPage} defaultValue={Number(rowsPerPage)}>
-        <option value="2">2</option>
-        <option value="4">4</option>
+      <select 
+        name="rowsPerPage"
+        id="rows_select"
+        onChange={handleChangeRowsPerPage}
+        defaultValue={Number(rowsPerPage)}
+      >
         <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
       </select>
-      {`${(currentPage*currentRowsPerPage)+1} - ${((currentPage+1)*currentRowsPerPage)}`}
-      <IconButton id="prev" onClick={handleChangePage} disabled={currentPage === 0} ><ArrowBackIosIcon /></IconButton>
-      <IconButton id="next" onClick={handleChangePage} disabled={ (currentPage+1)*currentRowsPerPage >= props.count } ><ArrowForwardIosIcon /></IconButton>
-    </>
+      {`${(currentPage*currentRowsPerPage)+1} - ${((currentPage+1)*currentRowsPerPage) < props.count ? ((currentPage+1)*currentRowsPerPage) : props.count}`}
+      <IconButton 
+        className="classic-button"
+        id="prev"
+        onClick={handleChangePage}
+        disabled={currentPage === 0}
+      >
+        <ArrowBackIosIcon />
+      </IconButton>
+      <IconButton 
+        className="classic-button" 
+        id="next" onClick={handleChangePage} 
+        disabled={ (currentPage+1)*currentRowsPerPage >= props.count }
+      >
+        <ArrowForwardIosIcon />
+      </IconButton>
+    </div>
   )
 }

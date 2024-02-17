@@ -25,8 +25,16 @@ export default async function usersPage({ searchParams } : {[key: string]: strin
   const session = await getAuthSession();
 
   const role = session?.user.role;
+
+  // Sécuriser les search params suivant un tableau d'infos afin d'éviter les erreurs causées par la manipulation d'url par un utilisateur
+  // Param page voir un calcul avec page max si supérieur -> page max
+  // Param perPage 10, 25 ou 50 si autre -> 50
+  // Param des colSorted colonne existante sinon vide
+  // Param direction 'asc' ou 'desc' sinon ''
+  // Si l'un des params ne va pas -> update l'url avec les valeurs modifiées
+  
   const currentPage = Number(searchParams.page ?? 0) ?? 0;
-  const rowsPerPage = Number(searchParams.perPage ?? 50) ?? 50;
+  const rowsPerPage = Number(searchParams.per ?? 50) ?? 50;
   const colSorted: string = searchParams.sort ?? '';
   const direction = searchParams.dir ?? '';
 
@@ -44,7 +52,7 @@ export default async function usersPage({ searchParams } : {[key: string]: strin
   }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer className="custom-table" component={Paper}>
       <Table>
         <UserTableHead />
         <Suspense fallback={<LoadingSkeletonAdmin count={rowsPerPage} />} >

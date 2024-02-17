@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* @layer base { */
   :root {
     header {
       @apply sticky top-0 z-40 flex w-full flex-row items-center my-2 pb-2;
@@ -25,6 +25,13 @@
         color: #DDEFF0;
       }
     }
+    .classic-button[type="button"] {
+      background-color: inherit;
+      &:hover {
+        background-color: initial;
+        color: initial;
+      }
+    }
     form {
       @apply flex flex-col gap-4;
     }
@@ -38,7 +45,7 @@
       }
     }
   }
-}
+/* } */
 
 header .img-container {
   @media screen and (min-width : 600px) {

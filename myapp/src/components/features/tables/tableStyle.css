@@ -1,0 +1,24 @@
+.custom-table {
+  td {
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.01071em;
+    display: table-cell;
+    vertical-align: inherit;
+    text-align: left;
+    padding: 0 16px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+  .table-footer {
+    border-top: 1px rgba(224, 224, 224, 1) solid;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+    select {
+      border: 1px rgba(224, 224, 224, 1) solid;
+      border-radius: 0.5rem;
+    }
+  }
+}
