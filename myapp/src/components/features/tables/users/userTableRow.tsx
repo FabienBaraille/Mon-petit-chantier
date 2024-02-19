@@ -1,6 +1,6 @@
 "use client";
 
-import { TableRow, TableCell, IconButton } from "@mui/material";
+import { TableRow, IconButton } from "@mui/material";
 
 import EditIcon from '@mui/icons-material/Edit';
 import { UserData } from "../../../../../app/admin/users/page";

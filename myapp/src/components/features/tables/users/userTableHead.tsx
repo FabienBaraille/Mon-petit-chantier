@@ -16,13 +16,13 @@ export const UserTableHead = (props: UserTableHeadProps) => {
 
   const baseUrl = usePathname();
   const sortedCol = searchParams.get('sort');
-  const direction = searchParams.get('dir');
+  const order = searchParams.get('order');
 
   const changeSort = (id: string) => {
-    const newDirection = sortedCol !== id ? 'asc' : direction === 'asc' ? 'desc' : 'asc';
+    const newOrder = sortedCol !== id ? 'asc' : order === 'asc' ? 'desc' : 'asc';
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('sort', id);
-    newSearchParams.set('dir', newDirection);
+    newSearchParams.set('order', newOrder);
     newSearchParams.set('page', '0');
     const url = `${baseUrl}?${newSearchParams.toString()}`;
     router.push(url);
@@ -32,11 +32,12 @@ export const UserTableHead = (props: UserTableHeadProps) => {
     <TableHead>
       <TableRow>
         {rowsId.map((rowId, index) =>
-          <TableHeadCell 
-            id={rowId} 
-            name={rowsName[index]} 
-            direction={direction} 
-            sortedCol={sortedCol} 
+          <TableHeadCell
+            key={rowId}
+            id={rowId}
+            name={rowsName[index]}
+            order={order}
+            sortedCol={sortedCol}
             handleChange={changeSort}
           />
         )}

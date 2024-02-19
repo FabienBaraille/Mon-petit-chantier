@@ -21,12 +21,12 @@ export const CustomTablePagination = (props: CustomTablePaginationProps) => {
 
   const baseUrl = usePathname();
   const currentPage = Number(searchParams.get('page') ?? 0) ?? 0;
-  const currentRowsPerPage = Number(searchParams.get('per') ?? 50) ?? 50;
+  const currentRowsPerPage = Number(searchParams.get('rows') ?? 50) ?? 50;
 
   const [rowsPerPage, setRowsPerPage] = useState<string>(currentRowsPerPage.toString());
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement>) => {
-      const pageNumber = event.currentTarget.id === "prev" ? currentPage - 1 : currentPage + 1;
+      const pageNumber = event.currentTarget.id === 'prev' ? currentPage - 1 : currentPage + 1;
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.set('page', String(pageNumber));
       const url = `${baseUrl}?${newSearchParams.toString()}`;
@@ -35,7 +35,7 @@ export const CustomTablePagination = (props: CustomTablePaginationProps) => {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(event.currentTarget.value);
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('per', event.currentTarget.value);
+    newSearchParams.set('rows', event.currentTarget.value);
     newSearchParams.set('page', '0');
     const url = `${baseUrl}?${newSearchParams.toString()}`;
     router.push(url);
@@ -50,7 +50,7 @@ export const CustomTablePagination = (props: CustomTablePaginationProps) => {
         onChange={handleChangeRowsPerPage}
         defaultValue={Number(rowsPerPage)}
       >
-        {availableRowsPerPage.map((rowOption) => <option value={rowOption.toString()}>{rowOption}</option>)}
+        {availableRowsPerPage.map((rowOption) => <option key={rowOption} value={rowOption.toString()}>{rowOption}</option>)}
       </select>
       {`${(currentPage*currentRowsPerPage)+1} - ${((currentPage+1)*currentRowsPerPage) < props.count ? ((currentPage+1)*currentRowsPerPage) : props.count}`}
       <IconButton 

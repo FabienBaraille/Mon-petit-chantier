@@ -11,7 +11,7 @@ const userData = {
   email: true,
   role: true,
   status: true
-}
+};
 
 export const getAuthUser = async (name: string) => {
 
@@ -22,7 +22,22 @@ export const getAuthUser = async (name: string) => {
     WHERE "u"."name" = ${name}
   `
   return userList[0] || null
-}
+};
+
+export const getUserByMail = async (role: string | undefined, partialEmail: string) => {
+  if (role && role === "ADMIN") {
+    return await prisma.user.findMany({
+      where: {
+        email: {
+          contains: partialEmail
+        }
+      },
+      select: userData
+    })
+  } else {
+    return null
+  }
+};
 
 export const getUserFromDb = async (username: string, email: string) => {
   return await prisma.user.findMany({
@@ -37,7 +52,7 @@ export const getUserFromDb = async (username: string, email: string) => {
       ]
     }
   })
-}
+};
 
 export const getSortedUsers = async (userRole: string | undefined, order: {[key: string]: string} | undefined, limit: number, page: number) => {
   if (userRole && userRole === "ADMIN") {
@@ -51,7 +66,7 @@ export const getSortedUsers = async (userRole: string | undefined, order: {[key:
   } else {
     return null
   }
-}
+};
 
 export const getAllUsers = async (role: string | undefined) => {
   if (role && role === "ADMIN") {
@@ -62,7 +77,7 @@ export const getAllUsers = async (role: string | undefined) => {
   } else {
     return null
   }
-}
+};
 
 export const createUser = async ({
   username,
@@ -113,4 +128,4 @@ export const createUser = async ({
   } catch (error) {
     return { message: "Une erreur s'est produite, veuillez réessayer.", status: 500 }
   }
-}
+};

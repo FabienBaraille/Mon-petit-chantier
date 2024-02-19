@@ -1,34 +1,36 @@
-import { availableDirection, availableRowsPerPage, rowsId } from "../../components/features/tables/tableInfos";
+import { redirect } from "next/navigation";
+import { availableOrder, availableRowsPerPage, rowsId } from "../../components/features/tables/tableInfos";
 
-export const paramsUserCheck = (page: number, perPage: number, colSorted: string, direction: string, count: number, baseURL: string): string | null => {
+export const paramsUserCheck = (page: number, perPage: number, colSorted: string, order: string, count: number, baseURL: string) => {
   let isError = false;
   const searchParams = new URLSearchParams();
-  // Chercher comment récupérer directement tous les search params
-  searchParams.set('page', page.toString());
-  searchParams.set('per', perPage.toString());
-  searchParams.set('sort', colSorted);
-  searchParams.set('dir', direction);
 
   if (page > Math.ceil(count/perPage) - 1) {
     searchParams.set('page', (Math.ceil(count/perPage) - 1).toString());
     isError = true;
+  } else {
+    searchParams.set('page', page.toString());
   }
   if (!availableRowsPerPage.includes(perPage)) {
-    searchParams.set('per', availableRowsPerPage[0].toString());
+    searchParams.set('rows', availableRowsPerPage[availableRowsPerPage.length - 1].toString());
     isError = true;
+  } else {
+    searchParams.set('rows', perPage.toString());
   }
   if (colSorted !== '' && !rowsId.includes(colSorted)) {
     searchParams.delete('sort');
-    searchParams.delete('dir');
+    searchParams.delete('order');
     isError = true;
+  } else if (colSorted !== '') {
+    searchParams.set('sort', colSorted);
   }
-  if (!availableDirection.includes(direction)) {
-    searchParams.set('dir', availableDirection[0]);
+  if (searchParams.get('sort') && order !== '' && !availableOrder.includes(order)) {
+    searchParams.set('order', availableOrder[0]);
     isError = true;
+  } else if (searchParams.get('sort') && order !== '') {
+    searchParams.set('order', order);
   }
   if (isError) {
-    return `${baseURL}?${searchParams.toString()}`
-  } else {
-    return null;
+    redirect(`${baseURL}?${searchParams.toString()}`)
   }
 }

@@ -7,7 +7,7 @@ export type TableHeadCellProps = {
   name: string,
   id: string,
   handleChange: Function,
-  direction: string | null,
+  order: string | null,
   sortedCol: string | null
 };
 
@@ -21,7 +21,7 @@ export const TableHeadCell = (props: TableHeadCellProps) => {
         onClick={(event) => props.handleChange(event.currentTarget.id)}
       >
         {props.sortedCol !== props.id ? <SortIcon fontSize="small" /> :
-          props.direction === 'asc' ? <ArrowDownwardIcon fontSize="small" /> :
+          props.order === 'asc' ? <ArrowDownwardIcon fontSize="small" /> :
             <ArrowUpwardIcon fontSize="small" />
         }
       </IconButton>
