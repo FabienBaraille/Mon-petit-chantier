@@ -12,9 +12,7 @@ import { useRouter } from "next/navigation";
 import { MyLoadingButton } from "@/components/Theme/Custom/MyLoadingButton";
 import toast from "react-hot-toast";
 
-export type SignUpFormProps = {};
-
-export const SignUpForm = (props: SignUpFormProps) => {
+export const SignUpForm = () => {
 
   const router = useRouter();
 

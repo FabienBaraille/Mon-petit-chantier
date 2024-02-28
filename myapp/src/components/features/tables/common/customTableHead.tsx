@@ -2,14 +2,13 @@
 
 import { TableCell, TableHead, TableRow } from "@mui/material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { TableHeadCell } from "../tableHeadCell";
-import { rowsId, rowsName } from "../tableInfos";
+import { TableHeadCell } from "./tableHeadCell";
 
-export type UserTableHeadProps = {};
+export type CustomTableHeadProps = {rowsId: string[], rowsName: string[]};
 
 // Voir pour utiliser les props pour en faire un générique
 
-export const UserTableHead = (props: UserTableHeadProps) => {
+export const CustomTableHead = (props: CustomTableHeadProps) => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -31,17 +30,17 @@ export const UserTableHead = (props: UserTableHeadProps) => {
   return (
     <TableHead>
       <TableRow>
-        {rowsId.map((rowId, index) =>
+        {props.rowsId.map((rowId, index) =>
           <TableHeadCell
-            key={rowId}
+            key={index}
             id={rowId}
-            name={rowsName[index]}
+            name={props.rowsName[index]}
             order={order}
             sortedCol={sortedCol}
             handleChange={changeSort}
           />
         )}
-        <TableCell>Editer</TableCell>
+        <th>Editer</th>
       </TableRow>
     </TableHead>
   )

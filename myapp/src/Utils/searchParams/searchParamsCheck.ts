@@ -1,11 +1,14 @@
 import { redirect } from "next/navigation";
-import { availableOrder, availableRowsPerPage, rowsId } from "../../components/features/tables/tableInfos";
+import { availableOrder, availableRowsPerPage } from "../../components/features/tables/tableInfos";
 
-export const paramsUserCheck = (page: number, perPage: number, colSorted: string, order: string, count: number, baseURL: string) => {
+export const searchParamsCheck = (page: number, perPage: number, colSorted: string, order: string, count: number, rowsId: string[], baseURL: string) => {
   let isError = false;
+
   const searchParams = new URLSearchParams();
 
-  if (page > Math.ceil(count/perPage) - 1) {
+  if (count === 0) {
+    searchParams.set('page', '0')
+  } else if (page > Math.ceil(count/perPage) - 1) {
     searchParams.set('page', (Math.ceil(count/perPage) - 1).toString());
     isError = true;
   } else {

@@ -1,19 +1,20 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-
-import { Table, TableContainer, Paper, TableBody } from "@mui/material";
-
 import { getAuthSession } from "@/lib/auth";
-import { getSortedUsers, getUserByMail } from "@/Utils/Request/usersQuery";
-import { paramsUserCheck } from "@/Utils/checks/searchParamsCheck";
 
-import { UserTableHead } from "@/components/features/tables/users/userTableHead";
+import { Table, TableBody } from "@mui/material";
+
+import { getSortedUsers, getUserByMail } from "@/Utils/Request/usersQuery";
+import { searchParamsCheck } from "@/Utils/searchParams/searchParamsCheck";
+
 import { UserTableRow } from "@/components/features/tables/users/userTableRow";
-import { CustomTablePagination } from "@/components/features/tables/customTablePagination";
+import { CustomTablePagination } from "@/components/features/tables/common/customTablePagination";
 import { LoadingSkeletonAdmin } from "../loadingSkeletonAdmin";
-import { availableRowsPerPage } from "@/components/features/tables/tableInfos";
-import { SearchBar } from "@/components/features/tables/searchBar";
+import { availableRowsPerPage, userRowsId, userRowsName } from "@/components/features/tables/tableInfos";
+import { SearchBar } from "@/components/features/tables/common/searchBar";
+import { CustomTableHead } from "@/components/features/tables/common/customTableHead";
+import { MyTableContainer } from "@/components/Theme/Custom/MyTableContainer";
 
 export type UserData = {
   id: string,
@@ -24,7 +25,7 @@ export type UserData = {
   status: string,
 }
 
-export default async function usersPage({ searchParams } : {[key: string]: string | string[] | undefined}) {
+export default async function usersPage({ searchParams } :{searchParams: {[key: string]: string | undefined}}) {
 
   const session = await getAuthSession();
 
@@ -33,19 +34,20 @@ export default async function usersPage({ searchParams } : {[key: string]: strin
   const search = searchParams?.search ?? null;
   const currentPage = Number(searchParams?.page ?? 0) ?? 0;
   const rowsPerPage = Number(searchParams?.rows ?? availableRowsPerPage[availableRowsPerPage.length - 1]) ?? availableRowsPerPage[availableRowsPerPage.length - 1];
-  const colSorted: string = searchParams?.sort ?? '';
+  const colSorted = searchParams?.sort ?? '';
   const order = searchParams?.order ?? '';
 
-  const totalUsers = await prisma.user.count({});
+  let totalUsers = await prisma.user.count({});
 
   if (!search) {
-    paramsUserCheck(currentPage, rowsPerPage, colSorted, order, totalUsers, '/admin/users');
+    searchParamsCheck(currentPage, rowsPerPage, colSorted, order, totalUsers, userRowsId, '/admin/users');
   }
 
   let usersList: UserData[] | null = null;
 
   if (search) {
     usersList = await getUserByMail(role, search);
+    totalUsers = usersList ? usersList.length : 0;
   } else {
     let sortOrder = undefined;
     if (colSorted !== '') {
@@ -59,10 +61,10 @@ export default async function usersPage({ searchParams } : {[key: string]: strin
   }
 
   return (
-    <TableContainer className="custom-table" component={Paper}>
+    <MyTableContainer className="custom-table">
       <SearchBar placeholder="Email" default={search} />
       <Table>
-        <UserTableHead />
+        <CustomTableHead rowsId={userRowsId} rowsName={userRowsName} />
         <Suspense fallback={<LoadingSkeletonAdmin count={rowsPerPage} />} >
           <TableBody>
             {usersList.map((user, index) => <UserTableRow key={index} {...user} />)}
@@ -72,7 +74,7 @@ export default async function usersPage({ searchParams } : {[key: string]: strin
       <CustomTablePagination
         count={totalUsers}
       />
-    </TableContainer>
+    </MyTableContainer>
 
   )
 }

@@ -7,8 +7,8 @@ import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-import './tableStyle.css';
-import { availableRowsPerPage } from "./tableInfos";
+import '../tableStyle.css';
+import { availableRowsPerPage } from "../tableInfos";
 
 export type CustomTablePaginationProps = {
   count: number
@@ -50,7 +50,7 @@ export const CustomTablePagination = (props: CustomTablePaginationProps) => {
         onChange={handleChangeRowsPerPage}
         defaultValue={Number(rowsPerPage)}
       >
-        {availableRowsPerPage.map((rowOption) => <option key={rowOption} value={rowOption.toString()}>{rowOption}</option>)}
+        {availableRowsPerPage.map((rowOption, index) => <option key={index} value={rowOption.toString()}>{rowOption}</option>)}
       </select>
       {`${(currentPage*currentRowsPerPage)+1} - ${((currentPage+1)*currentRowsPerPage) < props.count ? ((currentPage+1)*currentRowsPerPage) : props.count}`}
       <IconButton 

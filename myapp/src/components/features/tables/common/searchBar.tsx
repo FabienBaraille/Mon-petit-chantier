@@ -25,7 +25,7 @@ export const SearchBar = (props: SearchBarProps) => {
   }
 
   return (
-    <div className="m-2 flex w-full" style={{justifyContent: "flex-end"}}>
+    <div className="m-2 flex w-full" style={{justifyContent: "flex-end", paddingRight: "0.5rem"}}>
       <OutlinedInput 
         id="search"
         inputProps={{

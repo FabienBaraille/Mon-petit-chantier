@@ -1,4 +1,4 @@
-import { TableCell, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import SortIcon from '@mui/icons-material/Sort';
@@ -13,7 +13,7 @@ export type TableHeadCellProps = {
 
 export const TableHeadCell = (props: TableHeadCellProps) => {
   return (
-    <TableCell>
+    <th>
       {props.name}
       <IconButton 
         className="classic-button" 
@@ -25,6 +25,6 @@ export const TableHeadCell = (props: TableHeadCellProps) => {
             <ArrowUpwardIcon fontSize="small" />
         }
       </IconButton>
-    </TableCell>
+    </th>
   )
 }

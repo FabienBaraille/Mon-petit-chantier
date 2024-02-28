@@ -24,8 +24,8 @@ export const getAuthUser = async (name: string) => {
   return userList[0] || null
 };
 
-export const getUserByMail = async (role: string | undefined, partialEmail: string) => {
-  if (role && role === "ADMIN") {
+export const getUserByMail = async (userRole: string | undefined, partialEmail: string) => {
+  if (userRole && userRole === "ADMIN") {
     return await prisma.user.findMany({
       where: {
         email: {
@@ -56,20 +56,19 @@ export const getUserFromDb = async (username: string, email: string) => {
 
 export const getSortedUsers = async (userRole: string | undefined, order: {[key: string]: string} | undefined, limit: number, page: number) => {
   if (userRole && userRole === "ADMIN") {
-    const usersList = await prisma.user.findMany({
+    return await prisma.user.findMany({
       skip: ((page)*limit),
       take: limit,
       select: userData,
       orderBy: order
     })
-    return usersList;
   } else {
     return null
   }
 };
 
-export const getAllUsers = async (role: string | undefined) => {
-  if (role && role === "ADMIN") {
+export const getAllUsers = async (userRole: string | undefined) => {
+  if (userRole && userRole === "ADMIN") {
     const usersList = await prisma.user.findMany({
       select: userData
     })

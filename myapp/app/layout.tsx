@@ -52,7 +52,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                   }
                 }}
               />
-              <main className='flex-1'>{children}</main>
+              <main className='flex w-full grow flex-col items-center p-2 sm:w-3/4'>{children}</main>
               <Footer />
             </div>
             <TailwindIndicator />
