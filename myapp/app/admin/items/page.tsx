@@ -15,7 +15,7 @@ import { availableRowsPerPage, itemRowsId, itemRowsName } from "@/components/fea
 import { LoadingSkeletonAdmin } from "../loadingSkeletonAdmin";
 import { ItemTableRow } from "@/components/features/tables/items/itemTableRow";
 import { MyTableContainer } from "@/components/Theme/Custom/MyTableContainer";
-import { ItemModal } from "@/components/features/modal/ItemModal";
+import { ItemFormModal } from "./ItemFormModal";
 import { NewElmtButton } from "@/components/features/button/newElmtButton";
 import { Item } from "@prisma/client";
 
@@ -43,7 +43,6 @@ export default async function AnswerPage({
   const colSorted = searchParams?.sort ?? '';
   const order = searchParams?.order ?? '';
   const show = searchParams?.show ? true : false;
-  const isEdit = searchParams?.edit ? true : false;
   const itemId = searchParams?.itemid ?? null;
 
   console.log(searchParams?.rows);
@@ -100,7 +99,7 @@ export default async function AnswerPage({
         <CustomTablePagination count={totalItems} />
       </MyTableContainer>
       <NewElmtButton name="un item" />
-      {show && <ItemModal isEdit={isEdit} itemId={itemId} itemInfo={itemInfo} />}
+      {show && <ItemFormModal itemId={itemId} itemInfo={itemInfo} />}
     </>
   )
 }

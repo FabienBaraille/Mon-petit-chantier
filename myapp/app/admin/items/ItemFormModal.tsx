@@ -1,16 +1,22 @@
 "use client";
-import * as React from 'react';
-import { MyAppBtn } from "@/components/Theme/Custom/MyAppBtn";
-import { Dialog, DialogTitle, MenuItem, Select, Slide, TextField } from "@mui/material";
-import { Item } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import { Controller, useForm } from "react-hook-form";
-import CloseIcon from '@mui/icons-material/Close';
-import { useRouter } from "next/navigation";
-import { TransitionProps } from '@mui/material/transitions';
 
-export type ItemModalProps = {
-  isEdit: boolean,
+import * as React from 'react';
+import { useRouter } from "next/navigation";
+import { Item } from "@prisma/client";
+
+import { z } from 'zod';
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import toast from 'react-hot-toast';
+import { Dialog, DialogTitle, MenuItem, Select, Slide, TextField } from "@mui/material";
+import { TransitionProps } from '@mui/material/transitions';
+import { MyLoadingButton } from '@/components/Theme/Custom/MyLoadingButton';
+
+import { itemActionCreate, itemActionUpdate } from './items.action';
+import { ItemFormSchema } from './item.schema';
+
+export type ItemFormModalProps = {
   itemId: string | null,
   itemInfo: Item | null
 };
@@ -24,15 +30,16 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export const ItemModal = (props: ItemModalProps) => {
+type FormFields = z.infer<typeof ItemFormSchema>;
 
-  const session = useSession();
+export const ItemFormModal = (props: ItemFormModalProps) => {
+
   const router = useRouter();
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { isSubmitting }
   } = useForm({
     defaultValues: {
       name: props.itemInfo ? props.itemInfo.name : "",
@@ -40,22 +47,28 @@ export const ItemModal = (props: ItemModalProps) => {
       description: props.itemInfo ? props.itemInfo.description : "",
       rank: props.itemInfo ? props.itemInfo.rank : "",
       status: props.itemInfo ? props.itemInfo.status : "",
-      order: props.itemInfo ? props.itemInfo.order : "",
-    }
+      order: props.itemInfo ? props.itemInfo.order : 0,
+    },
+    resolver: zodResolver(ItemFormSchema)
   })
 
-  const onSubmit = async (data: {
-    name: string,
-    unit: string | null,
-    description: string | null,
-    rank: string,
-    status: string,
-    order: string | number | null
-  }) => {
-    if (props.isEdit) {
-      console.log("edit");
-    } else {
-      console.log("create");
+  const onSubmit: SubmitHandler<FormFields> = async (datas) => {
+    const { data, serverError} = props.itemId ?
+      await itemActionUpdate({
+        itemId: props.itemId,
+        data: datas
+      }) : 
+      await itemActionCreate({
+        data: datas
+      });
+    if (data) {
+      toast.success(data.message);
+      router.back();
+      router.refresh();
+    }
+
+    if (serverError) {
+      toast.error(serverError);
     }
   }
 
@@ -68,17 +81,13 @@ export const ItemModal = (props: ItemModalProps) => {
       fullWidth
     >
       <DialogTitle sx={{p:2}}>
-        {props.isEdit ? "Modifier un item" : "Créer un item"}
+        {props.itemId ? "Modifier un item" : "Créer un item"}
       </DialogTitle>
-      <form onSubmit={handleSubmit(onSubmit)} action="POST" className='p-2'>
+      <form onSubmit={handleSubmit(onSubmit)} className='p-2'>
         <Controller
           control={control}
-          rules={{
-            required: true
-          }}
-          render={({ field: { onChange, value}}) => (
+          render={({ field: { onChange, value }}) => (
             <TextField
-              required
               id="name"
               label="Nom de l'item"
               value={value}
@@ -89,9 +98,8 @@ export const ItemModal = (props: ItemModalProps) => {
         />
         <Controller
           control={control}
-          render={({ field: { onChange, value}}) => (
+          render={({ field: { onChange, value }}) => (
             <TextField
-              required
               id="unit"
               label="Unité"
               value={value}
@@ -102,12 +110,8 @@ export const ItemModal = (props: ItemModalProps) => {
         />
         <Controller
           control={control}
-          rules={{
-            required: true
-          }}
-          render={({ field: { onChange, value}}) => (
+          render={({ field: { onChange, value }}) => (
             <TextField
-              required
               id="description"
               label="Description"
               value={value}
@@ -120,10 +124,7 @@ export const ItemModal = (props: ItemModalProps) => {
         />
         <Controller
           control={control}
-          rules={{
-            required: true
-          }}
-          render={({ field: { onChange, value}}) => (
+          render={({ field: { onChange, value }}) => (
             <Select
               id="rank"
               label="Rang"
@@ -139,7 +140,7 @@ export const ItemModal = (props: ItemModalProps) => {
         />
         <Controller
           control={control}
-          render={({ field: { onChange, value}}) => (
+          render={({ field: { onChange, value }}) => (
             <Select
               id="status"
               label="Statut"
@@ -154,22 +155,18 @@ export const ItemModal = (props: ItemModalProps) => {
         />
         <Controller
           control={control}
-          rules={{
-            required: true
-          }}
-          render={({ field: { onChange, value}}) => (
+          render={({ field: { onChange, value }}) => (
             <TextField
-              required
               id="order"
               label="Ordre de l'item"
               value={value}
-              onChange={onChange}
+              onChange={(event) => event.target.value ? onChange(parseInt(event.target.value)) : onChange(0)}
               type="number"
             />
           )}
           name="order"
         />
-        <MyAppBtn type="submit">{props.isEdit ? "Modifier" : "Créer"}</MyAppBtn>
+        <MyLoadingButton type='submit' loading={isSubmitting}>{props.itemId ? "Modifier" : "Créer"}</MyLoadingButton>
       </form>
     </Dialog>
   )

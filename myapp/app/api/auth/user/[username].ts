@@ -17,6 +17,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ON "a"."userId" = "u"."id"
     WHERE "u"."username" = ${username}
   `
-
   res.json(account)
 }

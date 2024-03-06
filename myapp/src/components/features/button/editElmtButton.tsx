@@ -15,7 +15,6 @@ export const EditElmtButton = (props: EditElmtButtonProps) => {
   const handleEdit = () => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('show', 'true');
-    newSearchParams.set('edit', 'true');
     newSearchParams.set('itemid', props.elmtId);
     const url = `${baseUrl}?${newSearchParams.toString()}`;
     router.push(url);

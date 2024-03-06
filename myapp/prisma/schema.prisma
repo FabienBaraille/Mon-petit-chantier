@@ -82,7 +82,7 @@ model Project {
   status        Status @default(NOT_STARTED)
   pictures      String?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt
 
   userId        String
   user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -104,7 +104,7 @@ model Step {
   description   String? @db.Text
   status        Status @default(NOT_STARTED)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt
 
   projectId     String
   project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -119,7 +119,7 @@ model Item {
   status        AdminStatus @default(UNABLED)
   order         Int?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt
 
   projects      ItemOnProject[]
   questions     QuestionOnItem[]
@@ -157,7 +157,7 @@ model Tip {
   description   String? @db.Text
   link          String?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt
 
   groupId       String?
   questionId    String?
@@ -173,7 +173,7 @@ model Question {
   title         String
   infos         String? @db.Text
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt
 
   items   QuestionOnItem[]
   groups  GroupOnQuestion[]
@@ -195,7 +195,7 @@ model Group {
   infos         String? @db.Text
   rank          Int
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt
 
   questions   GroupOnQuestion[]
   tips        Tip[]
@@ -218,7 +218,7 @@ model Suggestion {
   category      Category @default(OTHER)
   status        SuggestionStatus @default(IN_PROGRESS)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime?  @updatedAt
 
   user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
