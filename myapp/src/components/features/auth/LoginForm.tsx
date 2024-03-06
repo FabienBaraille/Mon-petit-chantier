@@ -85,6 +85,7 @@ export const LoginForm = (props: LoginFormProps) => {
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
+                    className="classic-button"
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}

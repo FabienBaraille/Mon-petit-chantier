@@ -12,8 +12,10 @@ import Tooltip from '@mui/material/Tooltip';
 import Logout from '@mui/icons-material/Logout';
 
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { MenuOptionsAdmin } from './MenuOptionsAdmin';
+import { MenuOptionsUser } from './MenuOptionsUser';
 
 export type LoggedMenuProps = {
   user: Session['user']
@@ -21,7 +23,10 @@ export type LoggedMenuProps = {
 
 export const LoggedMenu = (props: LoggedMenuProps) => {
 
+  const session = useSession();
 
+  const role = session.data?.user.role;
+  
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -35,6 +40,7 @@ export const LoggedMenu = (props: LoggedMenuProps) => {
       <Box>
         <Tooltip title="Mon compte">
           <IconButton
+            className='classic-button'
             onClick={handleClick}
             size="small"
             aria-controls={open ? 'account-menu' : undefined}
@@ -85,16 +91,7 @@ export const LoggedMenu = (props: LoggedMenuProps) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>
-          <Link href="/user/project/1">Chantier 1</Link>
-        </MenuItem>
-        <MenuItem>
-          <Link href="/user/project/2">Chantier 2</Link>
-        </MenuItem>
-        <Divider />
-        <MenuItem>
-          <Link href="/user/project/create/">Nouveau chantier</Link>
-        </MenuItem>
+        {role === "ADMIN" ? <MenuOptionsAdmin /> : <MenuOptionsUser />}
         <Divider />
         <MenuItem>
           <Link href="/user/account" className='flex flex-row items-center'><Avatar />Profil</Link>

@@ -1,4 +1,4 @@
-import { createUser } from "@/Utils/Request/createUser";
+import { createUser } from "@/Utils/Request/usersQuery";
 import { NextRequest } from "next/server";
 
 // API route for User and Account creation

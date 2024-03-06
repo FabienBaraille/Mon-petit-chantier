@@ -1,11 +1,13 @@
+"use client";
+
 import { Button, Link } from "@mui/material";
 import LoginIcon from '@mui/icons-material/Login';
+import { useWindowSize } from "@/Utils/customHook/useWindowSize";
 
 export const LoginBtn = () => {
 
-  // On regarde la taille de l'écran pour modifier le contenu du bouton de connexion
-  // const windowWidth = window.innerWidth;
-  
+  const windowWidth = useWindowSize();
+
   return (
     <Button
       LinkComponent={Link}
@@ -23,7 +25,6 @@ export const LoginBtn = () => {
         }
       }}
     >
-      Connexion
-      {/* {windowWidth >= 600 ? 'Connexion' : <LoginIcon fontSize="small" />} */}
+      {(windowWidth && windowWidth >= 600) ? 'Connexion' : <LoginIcon fontSize="small" />}
     </Button>)
 }

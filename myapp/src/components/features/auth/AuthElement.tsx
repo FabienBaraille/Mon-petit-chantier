@@ -1,5 +1,5 @@
 import { LoginBtn } from "./LoginBtn";
-import { LoggedMenu } from "./LoggedMenu";
+import { LoggedMenu } from "../loggedMenu/LoggedMenu";
 import { getAuthSession } from "@/lib/auth";
 
 export type AuthElementProps = {};

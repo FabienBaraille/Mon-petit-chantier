@@ -16,6 +16,9 @@ export const Footer = (props: FooterProps) => {
       >
         Infos Légales
       </Link>
+      <Typography variant="caption" color="#4F4F4F" >
+        {SiteConfig.title} &copy; {new Date().getFullYear()} FabienB
+      </Typography>
       <Link 
         underline="hover"
         variant="caption"
@@ -24,9 +27,6 @@ export const Footer = (props: FooterProps) => {
       >
         C.G.U.
       </Link>
-      <Typography variant="caption" color="#4F4F4F" >
-        {SiteConfig.title} &copy; {new Date().getFullYear()} FabienB
-      </Typography>
     </footer>
   )
 }
