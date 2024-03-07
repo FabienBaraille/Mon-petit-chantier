@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, MouseEvent } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -10,15 +10,18 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { MyLoadingButton } from "@/components/Theme/Custom/MyLoadingButton";
 import toast from "react-hot-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema } from "./auth.schema";
+import { z } from "zod";
 
 export type LoginFormProps = {};
+type FormFields = z.infer<typeof LoginSchema>;
 
 export const LoginForm = (props: LoginFormProps) => {
 
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -29,16 +32,16 @@ export const LoginForm = (props: LoginFormProps) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { isSubmitting },
   } = useForm({
     defaultValues: {
       username: "",
       password: ""
     },
+    resolver: zodResolver(LoginSchema)
   })
-  const onSubmit = async(data: { username: any; password: any; }) => {
+  const onSubmit: SubmitHandler<FormFields> = async(data) => {
     try {
-      setIsLoading(true);
       const response = await signIn("credentials", {username: data.username, password: data.password, redirect: false});
 
       if (response?.error) {
@@ -48,8 +51,6 @@ export const LoginForm = (props: LoginFormProps) => {
       }
     } catch (error: any) {
       toast.error(error.message)
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -57,9 +58,6 @@ export const LoginForm = (props: LoginFormProps) => {
     <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit(onSubmit)} action="POST">
       <Controller
         control={control}
-        rules={{
-          required: true
-        }}
         render={({field: { onChange, value }}) => (
           <TextField
             required
@@ -73,11 +71,8 @@ export const LoginForm = (props: LoginFormProps) => {
       />
       <Controller
         control={control}
-        rules={{
-          required: true
-        }}
         render={({field: { onChange, value }}) => (
-          <FormControl required>
+          <FormControl>
             <InputLabel htmlFor="password">Mot de passe</InputLabel>
             <OutlinedInput
               id="password"
@@ -105,7 +100,7 @@ export const LoginForm = (props: LoginFormProps) => {
       />
       <MyLoadingButton 
         type="submit"
-        loading={isLoading}
+        loading={isSubmitting}
       >
         Connecter
       </MyLoadingButton>

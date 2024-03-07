@@ -3,6 +3,8 @@ import { getAuthSession } from "./auth";
 
 export class ServerError extends Error {};
 
+export const safeAction = createSafeActionClient();
+
 export const adminAction = createSafeActionClient({
   handleReturnedServerError: (error) => {
     if (error instanceof ServerError) {
