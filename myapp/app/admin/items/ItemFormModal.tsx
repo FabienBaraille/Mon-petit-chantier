@@ -53,7 +53,7 @@ export const ItemFormModal = (props: ItemFormModalProps) => {
   })
 
   const onSubmit: SubmitHandler<FormFields> = async (datas) => {
-    const { data, serverError} = props.itemId ?
+    const { data, serverError } = props.itemId ?
       await itemActionUpdate({
         itemId: props.itemId,
         data: datas
