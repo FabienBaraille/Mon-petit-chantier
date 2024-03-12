@@ -67,7 +67,7 @@ export default async function usersPage({ searchParams } :{searchParams: {[key: 
         <CustomTableHead rowsId={userRowsId} rowsName={userRowsName} />
         <Suspense fallback={<LoadingSkeletonAdmin count={rowsPerPage} />} >
           <TableBody>
-            {usersList.map((user, index) => <UserTableRow key={index} {...user} />)}
+            {usersList.map((user, index) => <UserTableRow key={`u${index}`} {...user} />)}
           </TableBody>
         </Suspense>
       </Table>

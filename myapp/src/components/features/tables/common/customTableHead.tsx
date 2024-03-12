@@ -32,7 +32,7 @@ export const CustomTableHead = (props: CustomTableHeadProps) => {
       <TableRow>
         {props.rowsId.map((rowId, index) =>
           <TableHeadCell
-            key={index}
+            key={`${rowId}${index}`}
             id={rowId}
             name={props.rowsName[index]}
             order={order}

@@ -9,3 +9,7 @@ export const userRowsId = ['email', 'role', 'status'];
 // Items
 export const itemRowsName = ["Nom", "Rang", "Unité", "Statut"];
 export const itemRowsId = ["name", "rank", "unit", "status"];
+
+// Questions
+export const questionRowsName = ["Titre", "Infos"];
+export const questionRowsId = ["title", "infos"];

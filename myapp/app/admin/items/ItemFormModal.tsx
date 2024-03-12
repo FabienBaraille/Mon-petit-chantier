@@ -45,8 +45,8 @@ export const ItemFormModal = (props: ItemFormModalProps) => {
       name: props.itemInfo ? props.itemInfo.name : "",
       unit: props.itemInfo ? props.itemInfo.unit : "",
       description: props.itemInfo ? props.itemInfo.description : "",
-      rank: props.itemInfo ? props.itemInfo.rank : "",
-      status: props.itemInfo ? props.itemInfo.status : "",
+      rank: props.itemInfo ? props.itemInfo.rank : "CATEGORY",
+      status: props.itemInfo ? props.itemInfo.status : "ENABLED",
       order: props.itemInfo ? props.itemInfo.order : 0,
     },
     resolver: zodResolver(ItemFormSchema)
@@ -133,7 +133,7 @@ export const ItemFormModal = (props: ItemFormModalProps) => {
             >
               <MenuItem value="CATEGORY">Catégory</MenuItem>
               <MenuItem value="PRODUCT">Produit</MenuItem>
-              <MenuItem value="BY_PRODUCT">Par produit</MenuItem>
+              <MenuItem value="BY_PRODUCT">Sous produit</MenuItem>
             </Select>
           )}
           name="rank"
@@ -147,7 +147,7 @@ export const ItemFormModal = (props: ItemFormModalProps) => {
               value={value}
               onChange={onChange}
             >
-              <MenuItem value="UNABLED">Activé</MenuItem>
+              <MenuItem value="ENABLED">Activé</MenuItem>
               <MenuItem value="DISABLED">Désactivé</MenuItem>
             </Select>
           )}

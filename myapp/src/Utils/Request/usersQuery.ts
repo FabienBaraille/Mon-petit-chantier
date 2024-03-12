@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { User } from "@prisma/client";
-import bcrypt from 'bcrypt';
 
 const userData = {
   id: true,
