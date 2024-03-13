@@ -13,7 +13,7 @@ export const ItemTableRow = (props: ItemData) => {
       <td>{props.name}</td>
       <td>{props.rank}</td>
       <td>{props.unit}</td>
-      <td>{props.status === "UNABLED" ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}</td>
+      <td>{props.status === "ENABLED" ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}</td>
       <td>
         <EditElmtButton elmtId={props.id} />
       </td>

@@ -60,7 +60,7 @@ model User {
   image         String?
   city          String?
   role          String    @default("USER")
-  status        AdminStatus @default(UNABLED)
+  status        AdminStatus @default(ENABLED)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -71,7 +71,7 @@ model User {
 }
 
 enum AdminStatus {
-  UNABLED
+  ENABLED
   DISABLED
 }
 
@@ -116,7 +116,7 @@ model Item {
   unit          String? @db.Char(10)
   description   String? @db.Text
   rank          ItemRank @default(CATEGORY)
-  status        AdminStatus @default(UNABLED)
+  status        AdminStatus @default(ENABLED)
   order         Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime?  @updatedAt

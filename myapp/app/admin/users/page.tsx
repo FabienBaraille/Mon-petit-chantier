@@ -8,7 +8,7 @@ import { Table, TableBody } from "@mui/material";
 import { getSortedUsers, getUserByMail } from "@/Utils/Request/usersQuery";
 import { searchParamsCheck } from "@/Utils/searchParams/searchParamsCheck";
 
-import { UserTableRow } from "@/components/features/tables/users/userTableRow";
+import { UserTableRow } from "@/components/features/tables/rows/userTableRow";
 import { CustomTablePagination } from "@/components/features/tables/common/customTablePagination";
 import { LoadingSkeletonAdmin } from "../loadingSkeletonAdmin";
 import { availableRowsPerPage, userRowsId, userRowsName } from "@/components/features/tables/tableInfos";
@@ -67,7 +67,7 @@ export default async function usersPage({ searchParams } :{searchParams: {[key: 
         <CustomTableHead rowsId={userRowsId} rowsName={userRowsName} />
         <Suspense fallback={<LoadingSkeletonAdmin count={rowsPerPage} />} >
           <TableBody>
-            {usersList.map((user, index) => <UserTableRow key={index} {...user} />)}
+            {usersList.map((user, index) => <UserTableRow key={`u${index}`} {...user} />)}
           </TableBody>
         </Suspense>
       </Table>

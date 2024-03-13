@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ItemRank = ['CATEGORY', 'PRODUCT', 'BY_PRODUCT'] as const;
-export const ItemStatus = ['UNABLED', 'DISABLED'] as const;
+export const ItemStatus = ['ENABLED', 'DISABLED'] as const;
 
 export const ItemFormSchema = z.object({
   name: z.string().min(3).max(50),

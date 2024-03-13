@@ -1,23 +1,25 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { Item } from "@prisma/client";
 import { getAuthSession } from "@/lib/auth";
 
 import { Table, TableBody } from "@mui/material";
 
-import { getItemById, getItemsPartialName, getSortedItems } from "@/Utils/request/itemsQuery";
 import { searchParamsCheck } from "@/Utils/searchParams/searchParamsCheck";
+import { getItemsPartialName, getSortedItems, getItemById } from "@/Utils/Request/itemsQuery";
 
+import { MyTableContainer } from "@/components/Theme/Custom/MyTableContainer";
+
+import { NewElmtButton } from "@/components/features/button/newElmtButton";
 import { CustomTableHead } from "@/components/features/tables/common/customTableHead";
 import { CustomTablePagination } from "@/components/features/tables/common/customTablePagination";
 import { SearchBar } from "@/components/features/tables/common/searchBar";
+import { ItemTableRow } from "@/components/features/tables/rows/itemTableRow";
 import { availableRowsPerPage, itemRowsId, itemRowsName } from "@/components/features/tables/tableInfos";
+
 import { LoadingSkeletonAdmin } from "../loadingSkeletonAdmin";
-import { ItemTableRow } from "@/components/features/tables/items/itemTableRow";
-import { MyTableContainer } from "@/components/Theme/Custom/MyTableContainer";
 import { ItemFormModal } from "./ItemFormModal";
-import { NewElmtButton } from "@/components/features/button/newElmtButton";
-import { Item } from "@prisma/client";
 
 export type ItemData = {
   id: string,
@@ -27,7 +29,7 @@ export type ItemData = {
   status: string
 }
 
-export default async function AnswerPage({
+export default async function ItemPage({
   searchParams
 }: {
   searchParams : {[key: string]: string | undefined}
@@ -43,10 +45,7 @@ export default async function AnswerPage({
   const colSorted = searchParams?.sort ?? '';
   const order = searchParams?.order ?? '';
   const show = searchParams?.show ? true : false;
-  const itemId = searchParams?.itemid ?? null;
-
-  console.log(searchParams?.rows);
-  
+  const itemId = searchParams?.id ?? null;
 
   let totalItems = await prisma.item.count();
 
@@ -91,7 +90,7 @@ export default async function AnswerPage({
                   <td>item</td>
                   <td>existant</td>
                 </tr> :
-                itemsList.map((item, index) => <ItemTableRow key={index} {...item} />)
+                itemsList.map((item, index) => <ItemTableRow key={`i${index}`} {...item} />)
               }
             </TableBody>
           </Suspense>

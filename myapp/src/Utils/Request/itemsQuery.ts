@@ -23,7 +23,7 @@ export const getAllItems = async (userRole: string | undefined) => {
 export const getSortedItems = async (userRole: string | undefined, order: {[key: string]: string} | undefined, limit: number, page: number) => {
   if (userRole && userRole === "ADMIN") {
     return await prisma.item.findMany({
-      skip: ((page)*limit),
+      skip: (page*limit),
       take: limit,
       select: itemData,
       orderBy: order
