@@ -1,16 +1,21 @@
-import { getQuestionById, getQuestionPartialTitle, getSortedQuestion } from "@/Utils/Request/questionsQuery";
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { getAuthSession } from "@/lib/auth";
+
+import { Table, TableBody } from "@mui/material";
 import { searchParamsCheck } from "@/Utils/searchParams/searchParamsCheck";
+import { getQuestionById, getQuestionPartialTitle, getSortedQuestion } from "@/Utils/Request/questionsQuery";
+
 import { MyTableContainer } from "@/components/Theme/Custom/MyTableContainer";
 import { CustomTableHead } from "@/components/features/tables/common/customTableHead";
 import { SearchBar } from "@/components/features/tables/common/searchBar";
+import { QuestionTableRow } from "@/components/features/tables/rows/questionTableRow";
 import { availableRowsPerPage, questionRowsId, questionRowsName } from "@/components/features/tables/tableInfos";
-import { getAuthSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { Table, TableBody } from "@mui/material";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
 import { LoadingSkeletonAdmin } from "../loadingSkeletonAdmin";
-import { QuestionTableRow } from "@/components/features/tables/questions/questionTableRow";
+import { NewElmtButton } from "@/components/features/button/newElmtButton";
+import { QuestionFormModal } from "./QuestionFormModal";
+import { CustomTablePagination } from "@/components/features/tables/common/customTablePagination";
 
 export type QuestionData = {
   id: string,
@@ -54,7 +59,7 @@ export default async function QuestionPage({
   const colSorted = searchParams?.sort ?? '';
   const order = searchParams?.order ?? '';
   const show = searchParams?.show ? true : false;
-  const questionId = searchParams?.questionid ?? null;
+  const questionId = searchParams?.id ?? null;
 
   let totalQuestions = await prisma.question.count();
 
@@ -88,7 +93,7 @@ export default async function QuestionPage({
   return (
     <>
       <MyTableContainer className="custom-table">
-        <SearchBar placeholder="Nom" default={search} />
+        <SearchBar placeholder="Titre" default={search} />
         <Table>
           <CustomTableHead rowsId={questionRowsId} rowsName={questionRowsName} />
           <Suspense fallback={<LoadingSkeletonAdmin count={rowsPerPage} />}>
@@ -103,7 +108,10 @@ export default async function QuestionPage({
             </TableBody>
           </Suspense>
         </Table>
+        <CustomTablePagination count={totalQuestions} />
       </MyTableContainer>
+      <NewElmtButton name="une question" />
+      {show && <QuestionFormModal questionId={questionId} questionInfos={questionInfo} />}
     </>
   )
 }

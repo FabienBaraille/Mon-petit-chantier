@@ -8,7 +8,7 @@ import { Table, TableBody } from "@mui/material";
 import { getSortedUsers, getUserByMail } from "@/Utils/Request/usersQuery";
 import { searchParamsCheck } from "@/Utils/searchParams/searchParamsCheck";
 
-import { UserTableRow } from "@/components/features/tables/users/userTableRow";
+import { UserTableRow } from "@/components/features/tables/rows/userTableRow";
 import { CustomTablePagination } from "@/components/features/tables/common/customTablePagination";
 import { LoadingSkeletonAdmin } from "../loadingSkeletonAdmin";
 import { availableRowsPerPage, userRowsId, userRowsName } from "@/components/features/tables/tableInfos";

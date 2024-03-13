@@ -26,7 +26,9 @@ export const getQuestionPartialTitle = async (userRole: string | undefined, part
   if (userRole && userRole === "ADMIN") {
     return await prisma.question.findMany({
       where: {
-        title: partialTitle
+        title: {
+          contains: partialTitle
+        }
       }
     });
   } else {

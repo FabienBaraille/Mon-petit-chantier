@@ -1,9 +1,11 @@
 "use client";
 
-import { IconButton, InputAdornment, OutlinedInput, TextField } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
+import { useCallback, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+
+import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 
 export type SearchBarProps = {
   placeholder: string,
@@ -17,11 +19,28 @@ export const SearchBar = (props: SearchBarProps) => {
 
   const [searchValue, setSearchValue] = useState<string>(props.default ?? '');
 
-  const handleSearch = () => {
-    const searchParams = new URLSearchParams();
-    searchParams.set('search', searchValue);
-    const url = `${baseUrl}?${searchParams.toString()}`;
-    router.push(url);
+  const changeParams = (search: string) => {
+    setTimeout(() => {
+      const searchParams = new URLSearchParams();
+      searchParams.set('search', search);
+      const url = `${baseUrl}?${searchParams.toString()}`;
+      router.push(url);
+    }, 500)
+  }
+
+  const debounce = (func: Function, wait: number) => {
+    let timeout: ReturnType<typeof setTimeout>;
+    return (...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    }
+  }
+
+  const handleSearch = useCallback(debounce((inputVal: string) => changeParams(inputVal), 500), []);
+
+  const handleClean = () => {
+    setSearchValue("");
+    router.push(`${baseUrl}`);
   }
 
   return (
@@ -42,16 +61,29 @@ export const SearchBar = (props: SearchBarProps) => {
         value={searchValue}
         endAdornment= {
           <InputAdornment position="end">
-            <IconButton 
-              className="classic-button"
-              onClick={handleSearch}
-              edge="end"
-            >
-              <SearchIcon />
-            </IconButton>
+            {!searchValue ?
+              // <IconButton 
+              //   className="classic-button"
+              //   onClick={handleSearch}
+              //   edge="end"
+              // >
+                <SearchIcon />
+              // </IconButton>
+              :
+              <IconButton 
+                className="classic-button"
+                onClick={handleClean}
+                edge="end"
+              >
+                <CloseIcon />
+              </IconButton>
+            }
           </InputAdornment>
         }
-        onChange={(event) => setSearchValue(event.target.value)}
+        onChange={(event) => {
+          setSearchValue(event.target.value);
+          handleSearch(event.target.value);
+        }}
       />
     </div>
   )

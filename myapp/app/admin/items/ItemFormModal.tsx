@@ -9,9 +9,9 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import toast from 'react-hot-toast';
-import { Dialog, DialogTitle, MenuItem, Select, Slide, TextField } from "@mui/material";
-import { TransitionProps } from '@mui/material/transitions';
+import { Dialog, DialogTitle, MenuItem, Select, TextField } from "@mui/material";
 import { MyLoadingButton } from '@/components/Theme/Custom/MyLoadingButton';
+import { Transition } from '@/components/features/modal/transition';
 
 import { itemActionCreate, itemActionUpdate } from './items.action';
 import { ItemFormSchema } from './item.schema';
@@ -20,15 +20,6 @@ export type ItemFormModalProps = {
   itemId: string | null,
   itemInfo: Item | null
 };
-
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 type FormFields = z.infer<typeof ItemFormSchema>;
 

@@ -15,7 +15,7 @@ import { NewElmtButton } from "@/components/features/button/newElmtButton";
 import { CustomTableHead } from "@/components/features/tables/common/customTableHead";
 import { CustomTablePagination } from "@/components/features/tables/common/customTablePagination";
 import { SearchBar } from "@/components/features/tables/common/searchBar";
-import { ItemTableRow } from "@/components/features/tables/items/itemTableRow";
+import { ItemTableRow } from "@/components/features/tables/rows/itemTableRow";
 import { availableRowsPerPage, itemRowsId, itemRowsName } from "@/components/features/tables/tableInfos";
 
 import { LoadingSkeletonAdmin } from "../loadingSkeletonAdmin";
@@ -45,7 +45,7 @@ export default async function ItemPage({
   const colSorted = searchParams?.sort ?? '';
   const order = searchParams?.order ?? '';
   const show = searchParams?.show ? true : false;
-  const itemId = searchParams?.itemid ?? null;
+  const itemId = searchParams?.id ?? null;
 
   let totalItems = await prisma.item.count();
 

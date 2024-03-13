@@ -13,11 +13,6 @@ export const UserTableRow = (props: UserData) => {
       <td>{props.email}</td>
       <td>{props.role}</td>
       <td>{props.status === "ENABLED" ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}</td>
-      <td>
-        <IconButton className="classic-button" id={props.id} onClick={(event) => console.log(event.currentTarget.id)}>
-          <EditIcon fontSize="small" />
-        </IconButton>
-      </td>
     </TableRow>
   )
 }
