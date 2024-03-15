@@ -1,29 +1,33 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { adminQuery } from "./checkQuery";
 
-export const getAllQuestions = async (userRole: string | undefined) => {
-  if (userRole && userRole === "ADMIN") {
+export const getAllQuestions = async () => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
     return await prisma.question.findMany();
   } else {
-    return null;
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }
 
-export const getSortedQuestion = async (userRole: string | undefined, order: {[key: string]: string} | undefined, limit: number, page: number) => {
-  if (userRole && userRole === "ADMIN") {
+export const getSortedQuestion = async (order: {[key: string]: string} | undefined, limit: number, page: number) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
     return await prisma.question.findMany({
       skip: (page*limit),
       take: limit,
       orderBy: order
     });
   } else {
-    return null;
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }
 
-export const getQuestionPartialTitle = async (userRole: string | undefined, partialTitle: string) => {
-  if (userRole && userRole === "ADMIN") {
+export const getQuestionPartialTitle = async (partialTitle: string) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
     return await prisma.question.findMany({
       where: {
         title: {
@@ -32,12 +36,13 @@ export const getQuestionPartialTitle = async (userRole: string | undefined, part
       }
     });
   } else {
-    return null;
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }
 
-export const getQuestionById = async (userRole: string | undefined, id: string) => {
-  if (userRole && userRole === "ADMIN") {
+export const getQuestionById = async (id: string) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
     return await prisma.question.findUnique({
       where: {
         id: id
@@ -75,6 +80,6 @@ export const getQuestionById = async (userRole: string | undefined, id: string) 
       }
     });
   } else {
-    return null;
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }

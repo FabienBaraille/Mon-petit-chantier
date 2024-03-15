@@ -13,3 +13,8 @@ export const itemRowsId = ["name", "rank", "unit", "status"];
 // Questions
 export const questionRowsName = ["Titre", "Infos"];
 export const questionRowsId = ["title", "infos"];
+
+// Groups
+
+export const groupRowsName = ["Titre", "Rang"]
+export const groupRowsId = ["title", "rank"]

@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getAuthSession } from "@/lib/auth";
 
 import { Table, TableBody } from "@mui/material";
 import { searchParamsCheck } from "@/Utils/searchParams/searchParamsCheck";
@@ -49,10 +48,6 @@ export default async function QuestionPage({
   searchParams : {[key: string]: string | undefined}
 }) {
 
-  const session = await getAuthSession();
-
-  const role = session?.user.role;
-
   const search = searchParams.search ?? null;
   const currentPage = Number(searchParams?.page ?? 0) ?? 0;
   const rowsPerPage = Number(searchParams?.rows ?? availableRowsPerPage[availableRowsPerPage.length - 1]) ?? availableRowsPerPage[availableRowsPerPage.length - 1];
@@ -70,20 +65,20 @@ export default async function QuestionPage({
   let questionsList: QuestionData[] | null = null;
 
   if (search) {
-    questionsList = await getQuestionPartialTitle(role, search);
+    questionsList = await getQuestionPartialTitle(search);
     totalQuestions = questionsList ? questionsList.length : 0;
   } else {
     let sortOrder = undefined;
     if (colSorted !== '') {
       sortOrder = {[colSorted]: order}
     }
-    questionsList = await getSortedQuestion(role, sortOrder, rowsPerPage, currentPage);
+    questionsList = await getSortedQuestion(sortOrder, rowsPerPage, currentPage);
   }
 
   let questionInfo: QuestionInfoData | null = null;
 
   if (questionId) {
-    questionInfo = await getQuestionById(role, questionId);
+    questionInfo = await getQuestionById(questionId);
   }
 
   if (!questionsList) {

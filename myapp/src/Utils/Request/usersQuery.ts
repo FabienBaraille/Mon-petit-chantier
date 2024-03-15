@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { User } from "@prisma/client";
+import { adminQuery } from "./checkQuery";
 
 const userData = {
   id: true,
@@ -23,8 +24,9 @@ export const getAuthUser = async (name: string) => {
   return userList[0] || null
 };
 
-export const getUserByMail = async (userRole: string | undefined, partialEmail: string) => {
-  if (userRole && userRole === "ADMIN") {
+export const getUserByMail = async (partialEmail: string) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
     return await prisma.user.findMany({
       where: {
         email: {
@@ -34,7 +36,7 @@ export const getUserByMail = async (userRole: string | undefined, partialEmail: 
       select: userData
     })
   } else {
-    return null
+    throw new Error("Vous devez être identifié et administrateur");
   }
 };
 
@@ -53,8 +55,9 @@ export const getUserFromDb = async (username: string, email: string) => {
   })
 };
 
-export const getSortedUsers = async (userRole: string | undefined, order: {[key: string]: string} | undefined, limit: number, page: number) => {
-  if (userRole && userRole === "ADMIN") {
+export const getSortedUsers = async (order: {[key: string]: string} | undefined, limit: number, page: number) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
     return await prisma.user.findMany({
       skip: ((page)*limit),
       take: limit,
@@ -62,17 +65,18 @@ export const getSortedUsers = async (userRole: string | undefined, order: {[key:
       orderBy: order
     })
   } else {
-    return null
+    throw new Error("Vous devez être identifié et administrateur");
   }
 };
 
-export const getAllUsers = async (userRole: string | undefined) => {
-  if (userRole && userRole === "ADMIN") {
+export const getAllUsers = async () => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
     const usersList = await prisma.user.findMany({
       select: userData
     })
     return usersList
   } else {
-    return null
+    throw new Error("Vous devez être identifié et administrateur");
   }
 };

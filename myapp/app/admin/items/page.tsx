@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Item } from "@prisma/client";
-import { getAuthSession } from "@/lib/auth";
 
 import { Table, TableBody } from "@mui/material";
 
@@ -35,10 +34,6 @@ export default async function ItemPage({
   searchParams : {[key: string]: string | undefined}
 }) {
 
-  const session = await getAuthSession();
-
-  const role = session?.user.role;
-
   const search = searchParams.search ?? null;
   const currentPage = Number(searchParams?.page ?? 0) ?? 0;
   const rowsPerPage = Number(searchParams?.rows ?? availableRowsPerPage[availableRowsPerPage.length - 1]) ?? availableRowsPerPage[availableRowsPerPage.length - 1];
@@ -56,20 +51,20 @@ export default async function ItemPage({
   let itemsList: ItemData[] | null = null;
 
   if (search) {
-    itemsList = await getItemsPartialName(role, search);
+    itemsList = await getItemsPartialName(search);
     totalItems = itemsList ? itemsList.length : 0;
   } else {
     let sortOrder = undefined;
     if (colSorted !== '') {
       sortOrder = {[colSorted]: order}
     }
-    itemsList = await getSortedItems(role, sortOrder, rowsPerPage, currentPage);
+    itemsList = await getSortedItems(sortOrder, rowsPerPage, currentPage);
   }
 
   let itemInfo: Item | null = null;
 
   if (itemId) {
-    itemInfo = await getItemById(role, itemId);
+    itemInfo = await getItemById(itemId);
   }
 
   if (!itemsList) {
