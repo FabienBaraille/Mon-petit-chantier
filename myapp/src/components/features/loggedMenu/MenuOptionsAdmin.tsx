@@ -12,6 +12,7 @@ export const MenuOptionsAdmin = (props: MenuOptionsAdminProps) => {
       <MenuItem component={Link} href="/admin/users">Utilisateurs</MenuItem>
       <MenuItem component={Link} href="/admin/items">Items</MenuItem>
       <MenuItem component={Link} href="/admin/questions">Questions</MenuItem>
+      <MenuItem component={Link} href="/admin/groups">Groupes</MenuItem>
     </>
   )
 }

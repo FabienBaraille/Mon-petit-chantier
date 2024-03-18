@@ -6,7 +6,7 @@ import { adminQuery } from "./checkQuery";
 export const getAllQuestions = async () => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.question.findMany();
+    return prisma.question.findMany();
   } else {
     throw new Error("Vous devez être identifié et administrateur");
   }
@@ -15,7 +15,7 @@ export const getAllQuestions = async () => {
 export const getSortedQuestion = async (order: {[key: string]: string} | undefined, limit: number, page: number) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.question.findMany({
+    return prisma.question.findMany({
       skip: (page*limit),
       take: limit,
       orderBy: order
@@ -28,7 +28,7 @@ export const getSortedQuestion = async (order: {[key: string]: string} | undefin
 export const getQuestionPartialTitle = async (partialTitle: string) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.question.findMany({
+    return prisma.question.findMany({
       where: {
         title: {
           contains: partialTitle
@@ -43,7 +43,7 @@ export const getQuestionPartialTitle = async (partialTitle: string) => {
 export const getQuestionById = async (id: string) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.question.findUnique({
+    return prisma.question.findUnique({
       where: {
         id: id
       },

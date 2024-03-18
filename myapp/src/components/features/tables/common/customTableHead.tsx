@@ -1,10 +1,14 @@
 "use client";
 
-import { TableCell, TableHead, TableRow } from "@mui/material";
+import { TableHead, TableRow } from "@mui/material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { TableHeadCell } from "./tableHeadCell";
 
-export type CustomTableHeadProps = {rowsId: string[], rowsName: string[]};
+export type CustomTableHeadProps = {
+  rowsId: string[],
+  rowsName: string[],
+  notSortableRows?: string[]
+};
 
 // Voir pour utiliser les props pour en faire un générique
 
@@ -40,6 +44,8 @@ export const CustomTableHead = (props: CustomTableHeadProps) => {
             handleChange={changeSort}
           />
         )}
+        {props.notSortableRows ? props.notSortableRows.map((rowName) => <th key={rowName}>{rowName}</th>
+          ) : ''}
         <th>Editer</th>
       </TableRow>
     </TableHead>

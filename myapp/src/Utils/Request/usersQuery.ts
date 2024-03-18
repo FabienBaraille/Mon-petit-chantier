@@ -27,7 +27,7 @@ export const getAuthUser = async (name: string) => {
 export const getUserByMail = async (partialEmail: string) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.user.findMany({
+    return prisma.user.findMany({
       where: {
         email: {
           contains: partialEmail
@@ -41,7 +41,7 @@ export const getUserByMail = async (partialEmail: string) => {
 };
 
 export const getUserFromDb = async (username: string, email: string) => {
-  return await prisma.user.findMany({
+  return prisma.user.findMany({
     where: {
       OR: [
         {
@@ -58,7 +58,7 @@ export const getUserFromDb = async (username: string, email: string) => {
 export const getSortedUsers = async (order: {[key: string]: string} | undefined, limit: number, page: number) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.user.findMany({
+    return prisma.user.findMany({
       skip: ((page)*limit),
       take: limit,
       select: userData,
@@ -72,10 +72,9 @@ export const getSortedUsers = async (order: {[key: string]: string} | undefined,
 export const getAllUsers = async () => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    const usersList = await prisma.user.findMany({
+    return prisma.user.findMany({
       select: userData
     })
-    return usersList
   } else {
     throw new Error("Vous devez être identifié et administrateur");
   }

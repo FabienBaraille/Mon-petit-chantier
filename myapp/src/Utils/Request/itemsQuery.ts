@@ -14,7 +14,7 @@ const itemData = {
 export const getAllItems = async () => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.item.findMany({
+    return prisma.item.findMany({
       select: itemData
     })
   } else {
@@ -25,7 +25,7 @@ export const getAllItems = async () => {
 export const getSortedItems = async (order: {[key: string]: string} | undefined, limit: number, page: number) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.item.findMany({
+    return prisma.item.findMany({
       skip: (page*limit),
       take: limit,
       select: itemData,
@@ -39,7 +39,7 @@ export const getSortedItems = async (order: {[key: string]: string} | undefined,
 export const getItemsPartialName = async (partialName: string) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.item.findMany({
+    return prisma.item.findMany({
       where: {
         name: {
           contains: partialName
@@ -55,7 +55,7 @@ export const getItemsPartialName = async (partialName: string) => {
 export const getItemById = async (id: string) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
-    return await prisma.item.findUnique({
+    return prisma.item.findUnique({
       where: {
         id: id
       }
