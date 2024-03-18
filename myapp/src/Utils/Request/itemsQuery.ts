@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { adminQuery } from "./checkQuery";
 
 const itemData = {
   id: true,
@@ -10,32 +11,35 @@ const itemData = {
   status: true
 }
 
-export const getAllItems = async (userRole: string | undefined) => {
-  if (userRole && userRole === 'ADMIN') {
-    return await prisma.item.findMany({
+export const getAllItems = async () => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
+    return prisma.item.findMany({
       select: itemData
     })
   } else {
-    return null
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }
 
-export const getSortedItems = async (userRole: string | undefined, order: {[key: string]: string} | undefined, limit: number, page: number) => {
-  if (userRole && userRole === "ADMIN") {
-    return await prisma.item.findMany({
+export const getSortedItems = async (order: {[key: string]: string} | undefined, limit: number, page: number) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
+    return prisma.item.findMany({
       skip: (page*limit),
       take: limit,
       select: itemData,
       orderBy: order
     })
   } else {
-    return null;
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }
 
-export const getItemsPartialName = async (userRole: string | undefined, partialName: string) => {
-  if (userRole && userRole === "ADMIN") {
-    return await prisma.item.findMany({
+export const getItemsPartialName = async (partialName: string) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
+    return prisma.item.findMany({
       where: {
         name: {
           contains: partialName
@@ -44,18 +48,19 @@ export const getItemsPartialName = async (userRole: string | undefined, partialN
       select: itemData
     })
   } else {
-    return null;
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }
 
-export const getItemById = async (userRole: string | undefined, id: string) => {
-  if (userRole && userRole === 'ADMIN') {
-    return await prisma.item.findUnique({
+export const getItemById = async (id: string) => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
+    return prisma.item.findUnique({
       where: {
         id: id
       }
     })
   } else {
-    return null
+    throw new Error("Vous devez être identifié et administrateur");
   }
 }

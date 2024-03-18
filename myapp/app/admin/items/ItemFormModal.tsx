@@ -151,7 +151,7 @@ export const ItemFormModal = (props: ItemFormModalProps) => {
               id="order"
               label="Ordre de l'item"
               value={value}
-              onChange={(event) => event.target.value ? onChange(parseInt(event.target.value)) : onChange(0)}
+              onChange={(event) => (!event.target.value || parseInt(event.target.value) < 0 ) ? onChange(0) : onChange(parseInt(event.target.value))}
               type="number"
             />
           )}

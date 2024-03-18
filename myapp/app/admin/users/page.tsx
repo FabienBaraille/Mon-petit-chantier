@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getAuthSession } from "@/lib/auth";
 
 import { Table, TableBody } from "@mui/material";
 
@@ -27,10 +26,6 @@ export type UserData = {
 
 export default async function usersPage({ searchParams } :{searchParams: {[key: string]: string | undefined}}) {
 
-  const session = await getAuthSession();
-
-  const role = session?.user.role;
-
   const search = searchParams?.search ?? null;
   const currentPage = Number(searchParams?.page ?? 0) ?? 0;
   const rowsPerPage = Number(searchParams?.rows ?? availableRowsPerPage[availableRowsPerPage.length - 1]) ?? availableRowsPerPage[availableRowsPerPage.length - 1];
@@ -46,14 +41,14 @@ export default async function usersPage({ searchParams } :{searchParams: {[key: 
   let usersList: UserData[] | null = null;
 
   if (search) {
-    usersList = await getUserByMail(role, search);
+    usersList = await getUserByMail(search);
     totalUsers = usersList ? usersList.length : 0;
   } else {
     let sortOrder = undefined;
     if (colSorted !== '') {
       sortOrder = {[colSorted]: order}
     }
-    usersList = await getSortedUsers(role, sortOrder, rowsPerPage, currentPage);
+    usersList = await getSortedUsers(sortOrder, rowsPerPage, currentPage);
   }
 
   if (!usersList) {
