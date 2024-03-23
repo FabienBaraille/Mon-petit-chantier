@@ -15,7 +15,11 @@ export const questionRowsName = ["Titre", "Infos"];
 export const questionRowsId = ["title", "infos"];
 
 // Groups
-
 export const groupRowsName = ["Titre", "Rang"];
 export const groupRowsId = ["title", "rank"];
 export const notSortableGroupRowsName = ["Questions"];
+
+// Tips
+export const tipsRowsName = ["Titre", "Description"];
+export const tipsRowsId = ["title", "description"];
+export const notSortableTipsRowsName = ["Référence"];

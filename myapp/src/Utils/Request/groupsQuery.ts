@@ -14,6 +14,15 @@ const groupsData = {
   }
 }
 
+export const getAllGroups = async () => {
+  const isAutorized = await adminQuery();
+  if (isAutorized) {
+    return prisma.group.findMany();
+  } else {
+    throw new Error("Vous devez être identifié et administrateur");
+  }
+}
+
 export const getSortedGroups = async (order: {[key: string]: string} | undefined, limit: number, page: number) => {
   const isAutorized = await adminQuery();
   if (isAutorized) {
